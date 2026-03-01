@@ -1,23 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
-// SMTP transporter using your Spaceship email credentials
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT ?? "465"),
-  secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === "465",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
 
 export async function POST(req: NextRequest) {
+  console.log("Email request received...");
   try {
     const { name, email, subject, message, htmlBody } = await req.json();
 
     if (!name || !email || (!message && !htmlBody)) {
+      console.warn("Email failed: Missing fields", { name, email, subject });
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    }
+
+    // Initialize transporter inside the handler for better serverless reliability
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT ?? "465"),
+      secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === "465",
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      timeout: 10000, // 10s timeout
+    } as any);
+
+    console.log("Verifying SMTP connection to:", process.env.SMTP_HOST);
+    try {
+      await transporter.verify();
+      console.log("SMTP Verification successful");
+    } catch (verifyError: any) {
+      console.error("SMTP Verification failed details:", {
+        message: verifyError.message,
+        code: verifyError.code,
+        command: verifyError.command,
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT
+      });
+      return NextResponse.json({
+        error: "Server configuration error (SMTP)",
+        details: verifyError.message
+      }, { status: 500 });
     }
 
     const sentAt = new Date().toLocaleString("en-US", {
@@ -25,7 +47,7 @@ export async function POST(req: NextRequest) {
       hour: "2-digit", minute: "2-digit",
     });
 
-    const html = message ? `
+    const htmlContent = message ? `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,26 +125,23 @@ export async function POST(req: NextRequest) {
 </body>
 </html>` : "";
 
-    // Verify connection before sending
-    try {
-      await transporter.verify();
-    } catch (verifyError) {
-      console.error("SMTP Verification failed:", verifyError);
-      throw new Error("SMTP Configuration error");
-    }
-
+    console.log("Sending email to:", process.env.SMTP_USER);
     await transporter.sendMail({
-      from: process.env.SMTP_USER,
+      from: `Ellie's Sanctuary <${process.env.SMTP_USER}>`,
       to: process.env.SMTP_USER,
       replyTo: email,
       subject: subject ? `📬 ${subject} — from ${name}` : `📬 New enquiry from ${name}`,
-      html: htmlBody ?? html,
+      html: htmlBody ?? htmlContent,
     });
 
+    console.log("Email sent successfully!");
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Email error:", error);
-    return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Critical Email error:", {
+      message: error.message,
+      stack: error.stack
+    });
+    return NextResponse.json({ error: "Failed to send email", details: error.message }, { status: 500 });
   }
 }
 
