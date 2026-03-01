@@ -60,12 +60,12 @@ export default function AdminPuppies() {
             s === "reserved" ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-700";
 
     return (
-        <div className="p-8">
+        <div className="p-4 sm:p-8">
             {/* Toast */}
             {toast && (
-                <div className={`fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium border ${toast.type === "success"
-                        ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-                        : "bg-red-50 border-red-200 text-red-800"
+                <div className={`fixed top-4 right-4 z-[60] flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium border ${toast.type === "success"
+                    ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                    : "bg-red-50 border-red-200 text-red-800"
                     }`}>
                     {toast.type === "success"
                         ? <CheckCircle className="w-4 h-4 shrink-0" />
@@ -74,14 +74,14 @@ export default function AdminPuppies() {
                 </div>
             )}
 
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 className="font-display text-3xl font-bold text-brown-900">Puppies</h1>
+                    <h1 className="font-display text-2xl sm:text-4xl font-bold text-brown-900">Puppies</h1>
                     <p className="text-brown-800/50 text-sm mt-1">{puppies.length} total listings</p>
                 </div>
                 <Link
                     href="/admin/puppies/new"
-                    className="flex items-center gap-2 px-4 py-2 bg-sand-600 hover:bg-sand-700 text-cream-50 font-semibold rounded-xl text-sm transition-colors"
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-sand-600 hover:bg-sand-700 text-cream-50 font-semibold rounded-xl text-sm transition-colors"
                 >
                     <Plus className="w-4 h-4" /> Add Puppy
                 </Link>
@@ -100,8 +100,8 @@ export default function AdminPuppies() {
                     </Link>
                 </div>
             ) : (
-                <div className="bg-cream-100 border border-cream-200 rounded-2xl overflow-hidden">
-                    <table className="w-full">
+                <div className="bg-cream-100 border border-cream-200 rounded-2xl overflow-hidden overflow-x-auto">
+                    <table className="w-full min-w-[600px]">
                         <thead className="bg-cream-200/50 border-b border-cream-200">
                             <tr>
                                 {["Name", "Age", "Gender", "Fee", "Status", "Actions"].map((h) => (

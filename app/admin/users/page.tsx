@@ -57,14 +57,14 @@ export default function AdminUsersPage() {
     };
 
     return (
-        <div className="p-8">
-            <h1 className="font-display text-3xl font-bold text-brown-900 mb-6">Users</h1>
+        <div className="p-4 sm:p-8">
+            <h1 className="font-display text-2xl sm:text-4xl font-bold text-brown-900 mb-6">Users</h1>
 
             {loading ? (
                 <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton h-16 rounded-xl" />)}</div>
             ) : (
-                <div className="bg-cream-100 border border-cream-200 rounded-2xl overflow-hidden">
-                    <table className="w-full">
+                <div className="bg-cream-100 border border-cream-200 rounded-2xl overflow-hidden overflow-x-auto">
+                    <table className="w-full min-w-[700px]">
                         <thead className="bg-cream-200/50 border-b border-cream-200">
                             <tr>
                                 {["Name", "Email", "Role", "Joined", "Actions"].map((h) => (

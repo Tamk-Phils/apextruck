@@ -82,20 +82,20 @@ export default function AdminRequests() {
                 <Clock className="w-4 h-4 text-amber-500" />;
 
     return (
-        <div className="p-8">
+        <div className="p-4 sm:p-8">
             {toast && (
-                <div className={`fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium border ${toast.type === "success" ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"
+                <div className={`fixed top-4 right-4 z-[60] flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium border ${toast.type === "success" ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"
                     }`}>
                     {toast.type === "success" ? <CheckCircle className="w-4 h-4 shrink-0" /> : <XCircle className="w-4 h-4 shrink-0" />}
                     {toast.message}
                 </div>
             )}
-            <div className="flex items-center justify-between mb-6">
-                <h1 className="font-display text-3xl font-bold text-brown-900">Adoption Requests</h1>
-                <div className="flex gap-1 bg-cream-100 border border-cream-200 rounded-xl p-1">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h1 className="font-display text-2xl sm:text-4xl font-bold text-brown-900">Adoption Requests</h1>
+                <div className="flex gap-1 overflow-x-auto hide-scrollbar bg-cream-100 border border-cream-200 rounded-xl p-1 shrink-0">
                     {["all", "pending", "approved", "rejected"].map((s) => (
                         <button key={s} onClick={() => setFilter(s)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${filter === s ? "bg-sand-600 text-cream-50 shadow-sm" : "text-brown-800/70 hover:text-brown-900"}`}>
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize whitespace-nowrap transition-colors ${filter === s ? "bg-sand-600 text-cream-50 shadow-sm" : "text-brown-800/70 hover:text-brown-900"}`}>
                             {s}
                         </button>
                     ))}

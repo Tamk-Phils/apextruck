@@ -41,9 +41,9 @@ export default function AdminDashboard() {
     ];
 
     return (
-        <div className="p-8">
-            <h1 className="font-display text-3xl font-bold text-brown-900 mb-2">Overview</h1>
-            <p className="text-brown-800/50 mb-8">Welcome to the sanctuary admin panel.</p>
+        <div className="p-4 sm:p-8">
+            <h1 className="font-display text-2xl sm:text-4xl font-bold text-brown-900 mb-2">Overview</h1>
+            <p className="text-brown-800/50 text-sm sm:text-base mb-8">Welcome to the sanctuary admin panel.</p>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
                 {cards.map(({ icon: Icon, label, value, color }) => (
