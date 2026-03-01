@@ -103,19 +103,21 @@ export default function DashboardPage() {
                     ) : (
                         <div className="space-y-4">
                             {requests.map((req) => (
-                                <div key={req.id} className="bg-cream-100 border border-cream-200 rounded-2xl p-4 flex items-center gap-4">
-                                    <div className="w-16 h-16 rounded-xl bg-cream-200 overflow-hidden shrink-0">
-                                        {req.puppy?.images?.[0] ? (
-                                            <img src={req.puppy.images[0]} alt={req.puppy.name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-2xl">🐾</div>
-                                        )}
+                                <div key={req.id} className="bg-cream-100 border border-cream-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                                    <div className="flex items-center gap-4 flex-1">
+                                        <div className="w-16 h-16 rounded-xl bg-cream-200 overflow-hidden shrink-0">
+                                            {req.puppy?.images?.[0] ? (
+                                                <img src={req.puppy.images[0]} alt={req.puppy.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-2xl">🐾</div>
+                                            )}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h3 className="font-semibold text-brown-900 truncate">{req.puppy?.name}</h3>
+                                            <p className="text-xs text-brown-800/50 mt-0.5">{new Date(req.created_at).toLocaleDateString()}</p>
+                                        </div>
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="font-semibold text-brown-900">{req.puppy?.name}</h3>
-                                        <p className="text-xs text-brown-800/50 mt-0.5">{new Date(req.created_at).toLocaleDateString()}</p>
-                                    </div>
-                                    <div className="flex items-center gap-1.5">
+                                    <div className="flex items-center gap-1.5 pt-3 sm:pt-0 border-t sm:border-t-0 border-cream-200/50">
                                         {statusIcon(req.status)}
                                         <span className="text-sm font-medium capitalize text-brown-800">{req.status}</span>
                                     </div>
