@@ -2,104 +2,103 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Heart, Shield, Star } from "lucide-react";
+import { ArrowRight, ShieldCheck, PenTool as Tool, Truck, Star } from "lucide-react";
 
 const stats = [
-    { icon: Heart, value: "200+", label: "Happy Families" },
-    { icon: Shield, value: "100%", label: "Health Guaranteed" },
-    { icon: Star, value: "5★", label: "Top Rated Sanctuary" },
+    { icon: Truck, value: "5000+", label: "Deliveries Made" },
+    { icon: ShieldCheck, value: "100%", label: "Quality Inspected" },
+    { icon: Star, value: "4.9★", label: "Fleet Rating" },
 ];
 
-// Real Bichon Frise photos from Unsplash
-const BICHON_PHOTOS = {
-    hero: "https://images.unsplash.com/photo-1722426874719-d8aa92ff7f2d?auto=format&fit=crop&w=900&q=85",
-    inset: "https://images.unsplash.com/photo-1537123547273-e59f4f437f1b?auto=format&fit=crop&w=400&q=80",
+const TRUCK_PHOTOS = {
+    hero: "/hero_truck.webp",
+    inset: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=600&q=80", // Modern truck part
 };
 
 export default function HomeHeroClient() {
     return (
-        <section className="relative min-h-[95vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-charcoal-950">
             {/* Background Image with Overlay */}
             <div className="absolute inset-0">
                 <img
-                    src={BICHON_PHOTOS.hero}
-                    alt="Bichon Frise Sanctuary Background"
-                    className="w-full h-full object-cover"
+                    src={TRUCK_PHOTOS.hero}
+                    alt="Apex Truck Parts Hero"
+                    className="w-full h-full object-cover opacity-60"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-brown-900/90 via-brown-900/60 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-cream-50" />
+                <div className="absolute inset-0 bg-gradient-to-r from-charcoal-950 via-charcoal-900/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-charcoal-950" />
             </div>
 
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 flex flex-col justify-center min-h-[95vh]">
-                <div className="max-w-2xl">
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 flex flex-col justify-center min-h-[90vh]">
+                <div className="max-w-3xl">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
                     >
-                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sand-500/20 text-cream-50 text-sm font-medium mb-8 backdrop-blur-md border border-white/10">
-                            <span className="w-1.5 h-1.5 rounded-full bg-sand-400 animate-pulse" />
-                            Beautiful Puppies available now
+                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-500 text-xs font-black uppercase tracking-[0.2em] mb-10 backdrop-blur-md border border-amber-500/20">
+                            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                            Premium Hardware & Custom Flatbeds
                         </span>
                     </motion.div>
 
                     <motion.h1
-                        className="font-display text-4xl sm:text-7xl lg:text-8xl font-bold text-cream-50 mb-6 sm:mb-8 leading-[1.05]"
-                        initial={{ opacity: 0, y: 24 }}
+                        className="font-display text-5xl sm:text-8xl lg:text-9xl font-black text-white mb-8 leading-[0.9] tracking-tighter"
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.1 }}
                     >
-                        Find Your Perfect{" "}
-                        <span className="text-sand-400">Bichon Frise</span> Companion
+                        ENGINEERED FOR <br />
+                        <span className="text-amber-500">THE ROAD.</span>
                     </motion.h1>
 
                     <motion.p
-                        className="text-lg sm:text-xl text-cream-100/80 mb-8 sm:mb-10 leading-relaxed max-w-xl"
-                        initial={{ opacity: 0, y: 24 }}
+                        className="text-lg sm:text-xl text-surface-200/80 mb-12 leading-relaxed max-w-xl font-medium"
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
                     >
-                        At Ellie&apos;s Sanctuary, we raise cheerful Bichon Frise
-                        puppies with love, care, and dedication. Healthy, socialized,
-                        and ready to become your forever companion.
+                        Apex Truck Parts delivers high-performance components and custom beds
+                        built for maximum durability. Power your fleet with the hardware
+                        that never quits.
                     </motion.p>
 
                     <motion.div
-                        className="flex flex-wrap gap-4"
-                        initial={{ opacity: 0, y: 24 }}
+                        className="flex flex-wrap gap-5"
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.3 }}
                     >
                         <Link
                             href="/browse"
-                            className="inline-flex items-center gap-3 px-8 py-4 bg-sand-500 hover:bg-sand-600 text-cream-50 font-bold rounded-2xl transition-all hover:shadow-2xl hover:shadow-sand-500/30 active:scale-95 text-lg"
+                            className="inline-flex items-center gap-4 px-10 py-5 bg-amber-500 hover:bg-amber-600 text-charcoal-950 font-black uppercase tracking-widest rounded-2xl transition-all hover:shadow-2xl hover:shadow-amber-500/40 active:scale-95 text-lg"
                         >
-                            Browse Puppies
-                            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                            Browse Inventory
+                            <ArrowRight className="w-6 h-6" />
                         </Link>
                         <Link
                             href="/about"
-                            className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-cream-50 font-bold rounded-2xl hover:bg-white/20 transition-all text-lg"
+                            className="inline-flex items-center gap-4 px-10 py-5 bg-white/5 backdrop-blur-xl border border-white/10 text-white font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all text-lg"
                         >
-                            Our Story
+                            Our Mission
                         </Link>
                     </motion.div>
 
                     {/* Stats */}
                     <motion.div
-                        className="flex flex-wrap gap-10 mt-16 pt-10 border-t border-white/10"
+                        className="flex flex-wrap gap-12 mt-20 pt-12 border-t border-white/5"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.5 }}
                     >
                         {stats.map(({ icon: Icon, value, label }) => (
-                            <div key={label} className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10">
-                                    <Icon className="w-6 h-6 text-sand-400" />
+                            <div key={label} className="flex items-center gap-5">
+                                <div className="w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:border-amber-500/30 transition-colors">
+                                    <Icon className="w-7 h-7 text-amber-500" />
                                 </div>
-                                <div className="space-y-0.5">
-                                    <div className="font-display font-bold text-cream-50 text-xl">{value}</div>
-                                    <div className="text-sm text-cream-200/60 font-medium uppercase tracking-wider">{label}</div>
+                                <div className="space-y-1">
+                                    <div className="font-display font-black text-white text-2xl tracking-tight">{value}</div>
+                                    <div className="text-[10px] text-surface-200/40 font-black uppercase tracking-[0.2em]">{label}</div>
                                 </div>
                             </div>
                         ))}
@@ -109,23 +108,20 @@ export default function HomeHeroClient() {
 
             {/* Inset photo floating far right - decorative */}
             <motion.div
-                className="absolute top-1/2 -right-20 -translate-y-1/2 hidden xl:block z-10"
-                initial={{ opacity: 0, x: 40 }}
+                className="absolute top-1/2 -right-40 -translate-y-1/2 hidden 2xl:block z-10"
+                initial={{ opacity: 0, x: 60 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1, delay: 0.4 }}
             >
-                <div className="w-[400px] h-[550px] rounded-[40px] overflow-hidden border-[12px] border-white/5 backdrop-blur-xl shadow-2xl relative rotate-3">
+                <div className="w-[500px] h-[650px] rounded-[60px] overflow-hidden border-[16px] border-white/5 backdrop-blur-3xl shadow-[0_0_100px_rgba(0,0,0,0.8)] relative rotate-6 grayscale-0 hover:rotate-2 transition-transform duration-700">
                     <img
-                        src={BICHON_PHOTOS.inset}
-                        alt="Bichon Frise puppy close-up"
+                        src={TRUCK_PHOTOS.inset}
+                        alt="High-performance truck component"
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[28px]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/80 to-transparent" />
                 </div>
             </motion.div>
-
-            {/* Decorative bottom fade */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-cream-50 to-transparent pointer-events-none" />
         </section>
     );
 }

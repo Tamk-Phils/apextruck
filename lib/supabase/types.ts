@@ -30,13 +30,13 @@ export interface Database {
                     role?: "user" | "admin";
                 };
             };
-            puppies: {
+            parts: {
                 Row: {
                     id: string;
                     name: string;
-                    age: string | null;
-                    gender: "male" | "female" | null;
-                    fee: number | null;
+                    model_year: string | null;
+                    category: "heavy-duty" | "performance" | null;
+                    price: number | null;
                     status: "available" | "reserved" | "sold";
                     images: string[];
                     description: string | null;
@@ -46,9 +46,9 @@ export interface Database {
                 Insert: {
                     id?: string;
                     name: string;
-                    age?: string | null;
-                    gender?: "male" | "female" | null;
-                    fee?: number | null;
+                    model_year?: string | null;
+                    category?: "heavy-duty" | "performance" | null;
+                    price?: number | null;
                     status?: "available" | "reserved" | "sold";
                     images?: string[];
                     description?: string | null;
@@ -57,20 +57,20 @@ export interface Database {
                 };
                 Update: {
                     name?: string;
-                    age?: string | null;
-                    gender?: "male" | "female" | null;
-                    fee?: number | null;
+                    model_year?: string | null;
+                    category?: "heavy-duty" | "performance" | null;
+                    price?: number | null;
                     status?: "available" | "reserved" | "sold";
                     images?: string[];
                     description?: string | null;
                     updated_at?: string;
                 };
             };
-            adoption_requests: {
+            inquiries: {
                 Row: {
                     id: string;
                     user_id: string;
-                    puppy_id: string | null;
+                    part_id: string | null;
                     status: "pending" | "approved" | "rejected";
                     full_name: string | null;
                     email: string | null;
@@ -86,7 +86,7 @@ export interface Database {
                 Insert: {
                     id?: string;
                     user_id: string;
-                    puppy_id?: string | null;
+                    part_id?: string | null;
                     status?: "pending" | "approved" | "rejected";
                     full_name?: string | null;
                     email?: string | null;

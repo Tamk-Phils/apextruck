@@ -1,32 +1,43 @@
 @import "tailwindcss";
 
 @theme {
-  --color-cream-50: #FCFBF8;
-  --color-cream-100: #F9F6EE;
-  --color-cream-200: #F1EBD8;
-  --color-sand-400: #D4C49A;
-  --color-sand-500: #C2B280;
-  --color-sand-600: #A89B6D;
-  --color-sand-700: #8E7F58;
-  --color-brown-700: #6D4C41;
-  --color-brown-800: #4E342E;
-  --color-brown-900: #3E2723;
+  --color-charcoal-950: #020617;
+  /* Deep Slate / Charcoal 950 */
+  --color-charcoal-900: #0F172A;
+  /* Slate 900 - Main Background */
+  --color-charcoal-800: #1E293B;
+  /* Slate 800 - Cards/Surfaces */
+  --color-slate-700: #334155;
+  --color-slate-800: #1E293B;
+  --color-amber-500: #F59E0B;
+  --color-amber-600: #D97706;
+  --color-surface-50: #F8FAFC;
+  /* Slate 50 - Strongest headers */
+  --color-surface-100: #F1F5F9;
+  /* Slate 100 - Standard text */
+  --color-surface-200: #94A3B8;
+  /* Slate 400 - Muted text */
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Playfair Display", Georgia, serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
   html {
     font-family: var(--font-sans);
-    color: var(--color-brown-800);
-    background-color: var(--color-cream-50);
+    color: var(--color-surface-100);
+    background-color: var(--color-charcoal-900);
     scroll-behavior: smooth;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
-    color: var(--color-brown-900);
+    color: var(--color-surface-50);
     line-height: 1.2;
   }
 
@@ -41,6 +52,7 @@
     opacity: 0;
     transform: translateY(24px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -48,13 +60,23 @@
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .animate-fade-in-up {
@@ -66,7 +88,7 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--color-cream-100) 25%, var(--color-cream-200) 50%, var(--color-cream-100) 75%);
+  background: linear-gradient(90deg, var(--color-charcoal-800) 25%, var(--color-charcoal-900) 50%, var(--color-charcoal-800) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

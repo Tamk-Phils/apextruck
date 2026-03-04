@@ -3,20 +3,21 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, Menu, X, PawPrint, LogIn, LogOut, LayoutDashboard, MessageCircle } from "lucide-react";
+import { ChevronDown, Menu, X, Settings, LogIn, LogOut, LayoutDashboard, MessageCircle, Truck, ShieldCheck, PenTool as Tool, ShoppingBag } from "lucide-react";
 import { useAuth } from "@/lib/supabase/context";
+import { useCart } from "@/lib/cart-context";
 
 const resources = [
-    { label: "Health Guarantee", href: "/health-guarantee" },
-    { label: "Care & Training", href: "/care-and-training" },
-    { label: "Shipping & Delivery", href: "/shipping" },
+    { label: "Quality Guarantee", href: "/warranty" },
+    { label: "How To", href: "/maintenance" },
+    { label: "Shipping", href: "/shipping" },
     { label: "FAQ", href: "/faq" },
 ];
 
 const navLinks = [
     { label: "Home", href: "/" },
-    { label: "Browse Puppies", href: "/browse" },
-    { label: "About", href: "/about" },
+    { label: "Browse Parts", href: "/browse" },
+    { label: "About Us", href: "/about" },
     { label: "Contact", href: "/contact" },
 ];
 
@@ -24,6 +25,7 @@ export default function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
     const { user, role, signOut } = useAuth();
+    const { totalItems } = useCart();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [resourcesOpen, setResourcesOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -53,18 +55,20 @@ export default function Navbar() {
     return (
         <header
             className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
-                ? "bg-cream-50/95 backdrop-blur-md shadow-sm border-b border-cream-200"
-                : "bg-cream-50"
+                ? "bg-charcoal-950/95 backdrop-blur-md shadow-lg border-b border-white/5"
+                : "bg-charcoal-950"
                 }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+                <div className="flex items-center justify-between h-20">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-1.5 group shrink-0">
-                        <PawPrint className="w-6 h-6 sm:w-7 sm:h-7 text-sand-600 group-hover:text-sand-700 transition-colors" />
-                        <span className="font-display text-base sm:text-lg font-semibold text-brown-900 leading-tight">
-                            Ellie&apos;s<br />
-                            <span className="text-sand-600 text-[10px] sm:text-sm font-normal">Bichon Frise Sanctuary</span>
+                    <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:bg-amber-600 transition-colors">
+                            <Truck className="w-6 h-6 text-charcoal-950" />
+                        </div>
+                        <span className="font-display text-lg sm:text-xl font-bold text-surface-50 tracking-tight">
+                            APEX<br />
+                            <span className="text-amber-500 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em]">Truck Parts & Beds</span>
                         </span>
                     </Link>
 
@@ -74,9 +78,9 @@ export default function Navbar() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === link.href
-                                    ? "text-sand-600 bg-cream-100"
-                                    : "text-brown-800 hover:text-sand-600 hover:bg-cream-100"
+                                className={`px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wider transition-all ${pathname === link.href
+                                    ? "text-amber-500 bg-white/5"
+                                    : "text-surface-200 hover:text-white hover:bg-white/10"
                                     }`}
                             >
                                 {link.label}
@@ -87,22 +91,22 @@ export default function Navbar() {
                         <div className="relative" ref={dropdownRef}>
                             <button
                                 onClick={() => setResourcesOpen((o) => !o)}
-                                className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-brown-800 hover:text-sand-600 hover:bg-cream-100 transition-colors"
+                                className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wider text-surface-200 hover:text-white hover:bg-white/10 transition-all"
                             >
-                                Resources
+                                Guide
                                 <ChevronDown
                                     className={`w-4 h-4 transition-transform duration-200 ${resourcesOpen ? "rotate-180" : ""
                                         }`}
                                 />
                             </button>
                             {resourcesOpen && (
-                                <div className="absolute top-full left-0 mt-1 w-48 bg-cream-50 border border-cream-200 rounded-xl shadow-lg py-1 animate-fade-in">
+                                <div className="absolute top-full left-0 mt-2 w-56 bg-charcoal-800 border border-white/10 rounded-2xl shadow-2xl py-2 animate-fade-in overflow-hidden">
                                     {resources.map((r) => (
                                         <Link
                                             key={r.href}
                                             href={r.href}
                                             onClick={() => setResourcesOpen(false)}
-                                            className="block px-4 py-2 text-sm text-brown-800 hover:text-sand-600 hover:bg-cream-100 transition-colors"
+                                            className="block px-4 py-2.5 text-sm font-medium text-surface-200 hover:text-amber-500 hover:bg-charcoal-900/50 transition-colors"
                                         >
                                             {r.label}
                                         </Link>
@@ -113,51 +117,62 @@ export default function Navbar() {
                     </nav>
 
                     {/* Desktop Auth */}
-                    <div className="hidden md:flex items-center gap-2">
+                    <div className="hidden md:flex items-center gap-3">
                         {user ? (
                             <>
                                 {role === "admin" && (
                                     <Link
                                         href="/admin"
-                                        className="px-3 py-2 text-sm font-medium text-brown-800 hover:text-sand-600 hover:bg-cream-100 rounded-lg transition-colors"
+                                        className="px-4 py-2 text-sm font-bold uppercase tracking-wider text-surface-200 hover:text-white hover:bg-white/10 rounded-xl transition-all"
                                     >
                                         Admin
                                     </Link>
                                 )}
                                 <Link
                                     href="/dashboard"
-                                    className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-brown-800 hover:text-sand-600 hover:bg-cream-100 rounded-lg transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase tracking-wider text-surface-200 hover:text-white hover:bg-white/10 rounded-xl transition-all"
                                 >
                                     <LayoutDashboard className="w-4 h-4" />
-                                    Dashboard
+                                    Fleet
                                 </Link>
                                 <Link
                                     href="/chat"
-                                    className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-brown-800 hover:text-sand-600 hover:bg-cream-100 rounded-lg transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase tracking-wider text-surface-200 hover:text-white hover:bg-white/10 rounded-xl transition-all"
                                 >
                                     <MessageCircle className="w-4 h-4" />
                                     Chat
                                 </Link>
+                                <Link
+                                    href="/cart"
+                                    className="relative flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase tracking-wider text-surface-200 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                                >
+                                    <ShoppingBag className="w-4 h-4" />
+                                    Cart
+                                    {totalItems > 0 && (
+                                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 text-charcoal-950 text-[10px] font-black rounded-full flex items-center justify-center shadow-lg">
+                                            {totalItems}
+                                        </span>
+                                    )}
+                                </Link>
                                 <button
                                     onClick={handleSignOut}
-                                    className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-brown-800 hover:text-sand-600 hover:bg-cream-100 rounded-lg transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase tracking-wider text-surface-200 hover:text-white hover:bg-white/10 rounded-xl transition-all"
                                 >
                                     <LogOut className="w-4 h-4" />
-                                    Sign out
                                 </button>
                             </>
                         ) : (
                             <>
                                 <Link
                                     href="/login"
-                                    className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-brown-800 hover:text-sand-600 hover:bg-cream-100 rounded-lg transition-colors"
+                                    className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-surface-100 hover:text-white hover:bg-white/10 rounded-xl transition-all border border-white/10"
                                 >
                                     <LogIn className="w-4 h-4" />
-                                    Sign in
+                                    Sign In
                                 </Link>
                                 <Link
                                     href="/register"
-                                    className="px-4 py-2 text-sm font-semibold text-cream-50 bg-sand-600 hover:bg-sand-700 rounded-lg transition-colors"
+                                    className="px-6 py-2.5 text-sm font-black uppercase tracking-[0.1em] text-charcoal-950 bg-amber-500 hover:bg-amber-600 rounded-xl shadow-lg shadow-amber-500/20 active:scale-95 transition-all"
                                 >
                                     Get Started
                                 </Link>
@@ -168,66 +183,72 @@ export default function Navbar() {
                     {/* Mobile Menu Toggle */}
                     <button
                         onClick={() => setMobileOpen((o) => !o)}
-                        className="md:hidden p-2 rounded-lg text-brown-800 hover:bg-cream-100 transition-colors"
+                        className="md:hidden p-3 rounded-xl text-white/40 hover:text-amber-500 hover:bg-white/5 transition-all"
                         aria-label="Toggle menu"
                     >
-                        {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                     </button>
                 </div>
             </div>
 
             {/* Mobile Menu */}
-            {mobileOpen && (
-                <div className="md:hidden border-t border-cream-200 bg-cream-50 animate-fade-in">
-                    <div className="px-4 py-3 space-y-1">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                onClick={() => setMobileOpen(false)}
-                                className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === link.href
-                                    ? "text-sand-600 bg-cream-100"
-                                    : "text-brown-800 hover:text-sand-600 hover:bg-cream-100"
-                                    }`}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                        <div className="pt-1 border-t border-cream-200">
-                            <p className="px-3 py-1 text-xs font-semibold text-brown-800/50 uppercase tracking-wide">
-                                Resources
-                            </p>
-                            {resources.map((r) => (
+            {
+                mobileOpen && (
+                    <div className="md:hidden border-t border-white/5 bg-charcoal-950 animate-fade-in">
+                        <div className="px-4 py-6 space-y-2">
+                            {navLinks.map((link) => (
                                 <Link
-                                    key={r.href}
-                                    href={r.href}
+                                    key={link.href}
+                                    href={link.href}
                                     onClick={() => setMobileOpen(false)}
-                                    className="block px-3 py-2 rounded-lg text-sm text-brown-800 hover:text-sand-600 hover:bg-cream-100 transition-colors"
+                                    className={`block px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all ${pathname === link.href
+                                        ? "text-amber-500 bg-white/5"
+                                        : "text-surface-200 hover:text-white hover:bg-white/10"
+                                        }`}
                                 >
-                                    {r.label}
+                                    {link.label}
                                 </Link>
                             ))}
-                        </div>
-                        <div className="pt-1 border-t border-cream-200">
-                            {user ? (
-                                <>
-                                    {role === "admin" && (
-                                        <Link href="/admin" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-brown-800 hover:bg-cream-100">Admin</Link>
-                                    )}
-                                    <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-brown-800 hover:bg-cream-100">Dashboard</Link>
-                                    <Link href="/chat" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-brown-800 hover:bg-cream-100">Chat</Link>
-                                    <button onClick={handleSignOut} className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-brown-800 hover:bg-cream-100">Sign out</button>
-                                </>
-                            ) : (
-                                <>
-                                    <Link href="/login" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-brown-800 hover:bg-cream-100">Sign in</Link>
-                                    <Link href="/register" onClick={() => setMobileOpen(false)} className="block mx-3 mt-1 px-4 py-2 text-center text-sm font-semibold text-cream-50 bg-sand-600 rounded-lg">Get Started</Link>
-                                </>
-                            )}
+                            <div className="pt-4 border-t border-white/5">
+                                <p className="px-4 py-2 text-xs font-black text-white/30 uppercase tracking-[0.2em]">
+                                    Resources
+                                </p>
+                                {resources.map((r) => (
+                                    <Link
+                                        key={r.href}
+                                        href={r.href}
+                                        onClick={() => setMobileOpen(false)}
+                                        className="block px-4 py-2.5 rounded-xl text-sm font-medium text-surface-200 hover:text-amber-500 hover:bg-white/5 transition-colors"
+                                    >
+                                        {r.label}
+                                    </Link>
+                                ))}
+                            </div>
+                            <div className="pt-4 border-t border-white/5">
+                                {user ? (
+                                    <div className="space-y-2">
+                                        {role === "admin" && (
+                                            <Link href="/admin" onClick={() => setMobileOpen(false)} className="block px-4 py-3 rounded-xl text-sm font-bold uppercase text-surface-200 hover:bg-white/5">Admin</Link>
+                                        )}
+                                        <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="block px-4 py-3 rounded-xl text-sm font-bold uppercase text-surface-200 hover:bg-white/5">Fleet</Link>
+                                        <Link href="/cart" onClick={() => setMobileOpen(false)} className="block px-4 py-3 rounded-xl text-sm font-bold uppercase text-surface-200 hover:bg-white/5 flex items-center justify-between">
+                                            Cart
+                                            {totalItems > 0 && <span className="bg-amber-500 text-charcoal-950 text-[10px] font-black px-2 py-0.5 rounded-full">{totalItems}</span>}
+                                        </Link>
+                                        <Link href="/chat" onClick={() => setMobileOpen(false)} className="block px-4 py-3 rounded-xl text-sm font-bold uppercase text-surface-200 hover:bg-white/5">Chat</Link>
+                                        <button onClick={handleSignOut} className="w-full text-left px-4 py-3 rounded-xl text-sm font-bold uppercase text-surface-200 hover:bg-white/5">Sign out</button>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-2 pt-2">
+                                        <Link href="/login" onClick={() => setMobileOpen(false)} className="flex items-center justify-center px-4 py-3 rounded-xl text-sm font-bold uppercase text-surface-200 border border-white/10">Sign In</Link>
+                                        <Link href="/register" onClick={() => setMobileOpen(false)} className="flex items-center justify-center px-4 py-3 rounded-xl text-sm font-bold uppercase text-charcoal-950 bg-amber-500">Get Started</Link>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </header>
+                )
+            }
+        </header >
     );
 }

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/supabase/context";
-import { Send, MessageCircle, User, RefreshCw, ArrowLeft } from "lucide-react";
+import { Send, MessageCircle, User, RefreshCw, ArrowLeft, Truck, ShieldCheck, Wrench, Zap } from "lucide-react";
 
 interface Conversation {
     id: string;
@@ -131,7 +131,7 @@ export default function AdminChatPage() {
                 fetch("/api/push", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ userId: conv.user_id, message: `New message from Ellie's Sanctuary: ${content.slice(0, 80)}` }),
+                    body: JSON.stringify({ userId: conv.user_id, message: `New message from Apex Truck Parts: ${content.slice(0, 80)}` }),
                 }).catch(() => { });
             }
         } else if (error) {
@@ -144,47 +144,50 @@ export default function AdminChatPage() {
     const selectedConv = conversations.find((c) => c.id === selected);
 
     return (
-        <div className="flex h-[calc(100vh-56px)] lg:h-screen overflow-hidden relative">
+        <div className="flex h-[calc(100vh-56px)] lg:h-screen overflow-hidden relative bg-charcoal-900 font-sans">
             {/* ── Sidebar: Conversation List ── */}
             <div className={`
                 ${showMobileList ? "flex" : "hidden"} 
-                w-full lg:w-72 lg:flex border-r border-cream-200 bg-cream-100 flex-col shrink-0
+                w-full lg:w-96 lg:flex border-r border-white/5 bg-charcoal-800 flex-col shrink-0
             `}>
-                <div className="px-5 py-4 border-b border-cream-200 flex items-center justify-between">
-                    <h1 className="font-semibold text-brown-900 text-sm">Conversations</h1>
-                    <button onClick={loadConversations} className="p-1 rounded-lg hover:bg-cream-200 text-brown-800/50 hover:text-brown-800 transition-colors" title="Refresh">
+                <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between">
+                    <div>
+                        <h1 className="font-display text-xl font-black text-white uppercase tracking-tight">CUSTOMER <span className="text-amber-500">CHAT.</span></h1>
+                        <p className="text-[10px] text-surface-200/20 font-black uppercase tracking-[0.2em] mt-1">Direct message center</p>
+                    </div>
+                    <button onClick={loadConversations} className="p-3 rounded-xl hover:bg-white/5 text-white/20 hover:text-amber-500 transition-colors" title="Refresh">
                         <RefreshCw className="w-4 h-4" />
                     </button>
                 </div>
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
                     {loadingConvs ? (
-                        <div className="space-y-1 p-2">
-                            {[...Array(6)].map((_, i) => <div key={i} className="skeleton h-14 rounded-lg" />)}
+                        <div className="space-y-4 p-6">
+                            {[...Array(6)].map((_, i) => <div key={i} className="skeleton h-20 rounded-2xl bg-white/5" />)}
                         </div>
                     ) : conversations.length === 0 ? (
-                        <div className="text-center py-12 text-brown-800/40 text-xs px-4">
-                            <MessageCircle className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                            No conversations yet
+                        <div className="text-center py-20 text-white/10 px-6">
+                            <MessageCircle className="w-16 h-16 mx-auto mb-6 opacity-10" />
+                            <p className="text-[10px] font-black uppercase tracking-widest">No active chats found.</p>
                         </div>
                     ) : (
                         conversations.map((c) => (
                             <button
                                 key={c.id}
                                 onClick={() => handleSelectConversation(c.id)}
-                                className={`w-full text-left px-5 py-4 border-b border-cream-200/60 transition-colors ${selected === c.id
-                                    ? "bg-sand-500/10 border-l-[3px] border-l-sand-500"
-                                    : "hover:bg-cream-200/50 border-l-[3px] border-l-transparent"
+                                className={`w-full text-left px-8 py-6 border-b border-white/5 transition-all group ${selected === c.id
+                                    ? "bg-amber-500/5 border-l-4 border-l-amber-500"
+                                    : "hover:bg-white/[0.02] border-l-4 border-l-transparent"
                                     }`}
                             >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-sand-500/20 flex items-center justify-center shrink-0">
-                                        <User className="w-5 h-5 text-sand-600" />
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-all ${selected === c.id ? "bg-amber-500/10 border-amber-500/30" : "bg-charcoal-900 border-white/5 group-hover:border-white/10"}`}>
+                                        <User className={`w-6 h-6 ${selected === c.id ? "text-amber-500" : "text-white/20"}`} />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-sm font-semibold text-brown-900 truncate">
+                                        <p className={`text-sm font-black uppercase tracking-tight truncate ${selected === c.id ? "text-white" : "text-white/60"}`}>
                                             {c.userName || c.userEmail}
                                         </p>
-                                        <p className="text-xs text-brown-800/50 truncate">{c.userEmail}</p>
+                                        <p className="text-[10px] text-surface-200/20 font-black uppercase tracking-widest truncate mt-1">CHANNEL ID: {c.id.slice(0, 8)}</p>
                                     </div>
                                 </div>
                             </button>
@@ -196,45 +199,48 @@ export default function AdminChatPage() {
             {/* ── Chat Area ── */}
             <div className={`
                 ${!showMobileList ? "flex" : "hidden lg:flex"} 
-                flex-1 flex flex-col min-w-0 bg-cream-50
+                flex-1 flex flex-col min-w-0 bg-charcoal-950
             `}>
                 {selected ? (
                     <>
                         {/* Header */}
-                        <div className="px-5 py-3 border-b border-cream-200 bg-cream-100 flex items-center gap-3">
+                        <div className="px-8 py-5 border-b border-white/5 bg-charcoal-900/50 backdrop-blur-xl flex items-center gap-6">
                             <button
                                 onClick={() => setShowMobileList(true)}
-                                className="lg:hidden p-2 -ml-2 text-brown-800/60 hover:text-brown-900 transition-colors"
+                                className="lg:hidden p-3 -ml-2 text-white/40 hover:text-amber-500 transition-colors"
                             >
-                                <ArrowLeft className="w-5 h-5" />
+                                <ArrowLeft className="w-6 h-6" />
                             </button>
-                            <div className="w-9 h-9 rounded-full bg-sand-500/20 flex items-center justify-center">
-                                <User className="w-4 h-4 text-sand-600" />
+                            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                                <ShieldCheck className="w-6 h-6 text-amber-500" />
                             </div>
                             <div className="min-w-0">
-                                <p className="font-semibold text-brown-900 text-sm truncate">
-                                    {selectedConv?.userName || selectedConv?.userEmail || "User"}
+                                <p className="font-black text-white text-lg uppercase tracking-tight truncate">
+                                    {selectedConv?.userName || selectedConv?.userEmail || "Secure Client"}
                                 </p>
-                                <p className="text-[10px] text-brown-800/50 truncate">{selectedConv?.userEmail}</p>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <p className="text-[10px] text-surface-200/20 font-black uppercase tracking-widest truncate">{selectedConv?.userEmail}</p>
+                                </div>
                             </div>
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
+                        <div className="flex-1 overflow-y-auto px-8 py-10 space-y-6 custom-scrollbar bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-charcoal-900/40 via-transparent to-transparent">
                             {messages.length === 0 && (
-                                <div className="text-center py-12 text-brown-800/30 text-sm">
-                                    <MessageCircle className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                                    No messages yet
+                                <div className="text-center py-20 text-white/5">
+                                    <MessageCircle className="w-16 h-16 mx-auto mb-6 opacity-10" />
+                                    <p className="text-[10px] font-black uppercase tracking-widest">Establishing communication stream...</p>
                                 </div>
                             )}
                             {messages.map((msg) => (
                                 <div key={msg.id} className={`flex ${msg.is_admin ? "justify-end" : "justify-start"}`}>
-                                    <div className={`max-w-[85%] sm:max-w-[70%] px-4 py-3 rounded-2xl text-[13px] sm:text-sm leading-relaxed shadow-sm ${msg.is_admin
-                                        ? "bg-sand-600 text-cream-50 rounded-br-sm"
-                                        : "bg-white border border-cream-200 text-brown-800 rounded-bl-sm"
+                                    <div className={`max-w-[85%] sm:max-w-[70%] px-6 py-4 rounded-3xl text-sm leading-relaxed shadow-2xl ${msg.is_admin
+                                        ? "bg-amber-500 text-charcoal-950 font-black rounded-br-none"
+                                        : "bg-charcoal-800 border border-white/5 text-surface-50 rounded-bl-none"
                                         }`}>
                                         <p>{msg.content}</p>
-                                        <p className={`text-[10px] mt-1.5 font-medium ${msg.is_admin ? "text-cream-50/50" : "text-brown-800/40"}`}>
+                                        <p className={`text-[10px] mt-2 font-black uppercase tracking-widest opacity-40`}>
                                             {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                                         </p>
                                     </div>
@@ -244,32 +250,36 @@ export default function AdminChatPage() {
                         </div>
 
                         {/* Input */}
-                        <div className="px-5 py-4 border-t border-cream-200 bg-cream-100">
-                            <form onSubmit={sendMessage} className="flex gap-2">
-                                <input
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    placeholder="Type a message…"
-                                    className="flex-1 px-4 py-2.5 bg-cream-50 border border-cream-200 rounded-xl text-sm text-brown-800 placeholder:text-brown-800/40 focus:outline-none focus:border-sand-400 transition-colors"
-                                />
+                        <div className="px-8 py-6 border-t border-white/5 bg-charcoal-900/50 backdrop-blur-xl">
+                            <form onSubmit={sendMessage} className="flex gap-4">
+                                <div className="flex-1 relative">
+                                    <input
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        placeholder="Send a message..."
+                                        className="w-full px-8 py-5 bg-charcoal-800 border border-white/5 rounded-[32px] text-sm text-white placeholder:text-white/10 focus:outline-none focus:border-amber-500/30 transition-all font-medium"
+                                    />
+                                    <Zap className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/5" />
+                                </div>
                                 <button
                                     type="submit"
                                     disabled={sending || !input.trim()}
-                                    className="w-11 h-11 bg-sand-600 hover:bg-sand-700 disabled:opacity-50 text-cream-50 rounded-xl flex items-center justify-center shrink-0 shadow-sm transition-all active:scale-95"
+                                    className="w-16 h-16 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-charcoal-950 rounded-2xl flex items-center justify-center shrink-0 shadow-2xl shadow-amber-500/20 transition-all active:scale-95 group"
                                 >
-                                    <Send className="w-5 h-5" />
+                                    <Send className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                 </button>
                             </form>
                         </div>
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-brown-800/30 px-6 text-center gap-4">
-                        <div className="w-20 h-20 rounded-full bg-cream-200 flex items-center justify-center mb-2">
-                            <MessageCircle className="w-10 h-10 opacity-20" />
+                    <div className="flex-1 flex flex-col items-center justify-center p-12 text-center gap-8 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-500/5 via-transparent to-transparent opacity-50" />
+                        <div className="w-32 h-32 rounded-[48px] bg-charcoal-800 border border-white/5 flex items-center justify-center relative z-10 animate-bounce-slow">
+                            <MessageCircle className="w-12 h-12 text-amber-500 opacity-20" />
                         </div>
-                        <div>
-                            <p className="text-lg font-semibold text-brown-900/40">Select a Chat</p>
-                            <p className="text-sm">Choose a conversation from the list to start messaging.</p>
+                        <div className="relative z-10 max-w-sm">
+                            <p className="font-display text-4xl font-black text-white uppercase tracking-tighter mb-4">CUSTOMER <span className="text-amber-500">CHAT.</span></p>
+                            <p className="text-[10px] text-surface-200/20 font-black uppercase tracking-[0.3em] leading-loose">Select a customer to start chatting.</p>
                         </div>
                     </div>
                 )}

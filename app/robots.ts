@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: "/",
             disallow: ["/admin/", "/dashboard/", "/api/", "/chat/"],
         },
-        sitemap: "https://eliesbichon.com/sitemap.xml",
+        sitemap: "https://apextruckparts.com/sitemap.xml",
     };
 }

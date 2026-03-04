@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { PawPrint, Mail, ArrowLeft, CheckCircle } from "lucide-react";
+import { ShieldCheck, Mail, ArrowLeft, CheckCircle } from "lucide-react";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
@@ -29,57 +29,59 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <div className="min-h-screen bg-cream-50 flex items-center justify-center px-4">
+        <div className="min-h-screen bg-charcoal-900 flex items-center justify-center px-4 font-sans">
             <div className="w-full max-w-md">
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-sand-500/15 mb-4">
-                        <PawPrint className="w-7 h-7 text-sand-600" />
+                <div className="text-center mb-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 mb-6 border border-amber-500/20">
+                        <ShieldCheck className="w-8 h-8 text-amber-500" />
                     </div>
-                    <h1 className="font-display text-3xl font-bold text-brown-900 mb-1">Reset Password</h1>
-                    <p className="text-brown-800/60 text-sm">
-                        We&apos;ll send a reset link to your email
+                    <h1 className="font-display text-4xl font-black text-white mb-2 uppercase tracking-tighter">Identity <span className="text-amber-500">Recovery.</span></h1>
+                    <p className="text-surface-200/40 text-sm font-medium uppercase tracking-widest">
+                        Industrial credentials restoration portal
                     </p>
                 </div>
 
-                <div className="bg-cream-100 border border-cream-200 rounded-2xl p-6 shadow-sm">
+                <div className="bg-charcoal-800 border border-white/5 rounded-[32px] p-8 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-3xl rounded-full" />
+
                     {sent ? (
-                        <div className="text-center py-4">
-                            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-100 mb-4">
-                                <CheckCircle className="w-7 h-7 text-emerald-600" />
+                        <div className="text-center py-6 relative">
+                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-500/10 mb-8 border border-emerald-500/20">
+                                <CheckCircle className="w-10 h-10 text-emerald-500" />
                             </div>
-                            <h2 className="font-semibold text-brown-900 mb-2">Check your inbox</h2>
-                            <p className="text-sm text-brown-800/60 mb-4">
-                                We sent a password reset link to <strong>{email}</strong>.
-                                Check your inbox and spam folder.
+                            <h2 className="font-display text-2xl font-black text-white mb-4 uppercase tracking-tight">Transmission Sent</h2>
+                            <p className="text-surface-200/40 text-sm font-medium leading-relaxed mb-8">
+                                Password restoration protocols sent to <strong>{email}</strong>.
+                                Check your encrypted inbox.
                             </p>
-                            <p className="text-xs text-brown-800/40">
-                                Didn&apos;t receive it? Contact us at{" "}
-                                <a href="mailto:adminsupport@eliesbichon.com" className="text-sand-600 hover:underline">
-                                    adminsupport@eliesbichon.com
+                            <p className="text-[10px] text-surface-200/20 font-black uppercase tracking-[0.2em]">
+                                No dispatch received? Contact{" "}
+                                <a href="mailto:support@apextruckparts.com" className="text-amber-500">
+                                    APEX SUPPORT
                                 </a>
                             </p>
                         </div>
                     ) : (
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <form onSubmit={handleSubmit} className="space-y-6 relative">
                             <div>
-                                <label className="block text-sm font-medium text-brown-800 mb-1.5">
-                                    Email Address
+                                <label className="block text-[10px] font-black text-surface-200/30 uppercase tracking-[0.2em] mb-4 ml-1">
+                                    Registered Email Address
                                 </label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brown-800/30" />
+                                    <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-200/20" />
                                     <input
                                         type="email"
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="you@example.com"
-                                        className="w-full pl-10 pr-4 py-2.5 bg-cream-50 border border-cream-200 rounded-xl text-sm text-brown-800 placeholder:text-brown-800/30 focus:outline-none focus:border-sand-400 transition-colors"
+                                        placeholder="you@company.com"
+                                        className="w-full pl-16 pr-6 py-4 bg-charcoal-900 border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-amber-500/50 focus:bg-charcoal-950 transition-all placeholder:text-surface-200/20"
                                     />
                                 </div>
                             </div>
 
                             {error && (
-                                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-500 font-bold uppercase tracking-widest text-center">
                                     {error}
                                 </div>
                             )}
@@ -87,17 +89,17 @@ export default function ForgotPasswordPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-3 bg-sand-600 hover:bg-sand-700 disabled:opacity-60 text-cream-50 font-semibold rounded-xl transition-colors"
+                                className="w-full py-5 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-charcoal-950 font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-amber-500/20 active:scale-[0.98] text-sm"
                             >
-                                {loading ? "Sending…" : "Send Reset Link"}
+                                {loading ? "INITIALIZING…" : "DISPATCH RESET LINK"}
                             </button>
                         </form>
                     )}
                 </div>
 
-                <p className="text-center text-sm text-brown-800/60 mt-4">
-                    <Link href="/login" className="inline-flex items-center gap-1 text-sand-600 font-medium hover:underline">
-                        <ArrowLeft className="w-3.5 h-3.5" /> Back to Sign In
+                <p className="text-center mt-8 font-medium">
+                    <Link href="/login" className="inline-flex items-center gap-2 text-surface-200/30 hover:text-amber-500 font-black uppercase tracking-widest text-[10px] transition-all">
+                        <ArrowLeft className="w-4 h-4" /> Return to Access Control
                     </Link>
                 </p>
             </div>

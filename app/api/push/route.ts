@@ -8,7 +8,7 @@ const supabaseAdmin = createClient(
 );
 
 webpush.setVapidDetails(
-    process.env.VAPID_CONTACT_EMAIL ?? "mailto:adminsupport@eliesbichon.com",
+    process.env.VAPID_CONTACT_EMAIL ?? "mailto:adminsupport@apextruckparts.com",
     process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
     process.env.VAPID_PRIVATE_KEY!
 );
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         }
 
         const payload = JSON.stringify({
-            title: "Ellie's Bichon Frise Sanctuary",
+            title: "Apex Truck Parts & Beds",
             body: message,
             icon: "/icon-192.png",
             badge: "/icon-192.png",

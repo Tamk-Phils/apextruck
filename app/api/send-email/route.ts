@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
           <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#4E342E 0%,#3E2723 100%);padding:32px 40px;text-align:center;">
-              <p style="margin:0 0 6px 0;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#C2B280;font-weight:600;">Ellie's Bichon Frise Sanctuary</p>
+              <p style="margin:0 0 6px 0;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#C2B280;font-weight:600;">Apex Truck Parts & Beds</p>
               <h1 style="margin:0;font-size:26px;font-weight:700;color:#FCFBF8;line-height:1.3;">New Contact Message</h1>
               <p style="margin:10px 0 0;font-size:13px;color:#C2B280;">📬 Someone reached out via the website</p>
             </td>
@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
             <td style="background:#F9F6EE;border-top:1px solid #F1EBD8;padding:20px 40px;text-align:center;">
               <p style="margin:0;font-size:12px;color:#A89B6D;">
                 Received ${sentAt}<br/>
-                Sent from the contact form at <strong>eliesbichon.com</strong>
+                Sent from the contact form at <strong>apextruckparts.com</strong>
               </p>
             </td>
           </tr>

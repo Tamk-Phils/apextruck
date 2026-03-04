@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const ADMIN_EMAIL = "adminsupport@eliesbichon.com";
+const ADMIN_EMAIL = "adminsupport@apextruckparts.com";
 const ADMIN_PASSWORD = "Phil$7872";
 
 export async function GET(req: NextRequest) {

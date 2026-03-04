@@ -14,12 +14,14 @@
 -- ============================================================
 -- STEP 1: DROP ALL TABLES (clears all legacy constraints)
 -- ============================================================
+DROP TABLE IF EXISTS public.order_items         CASCADE;
+DROP TABLE IF EXISTS public.orders              CASCADE;
 DROP TABLE IF EXISTS public.push_subscriptions  CASCADE;
 DROP TABLE IF EXISTS public.messages            CASCADE;
 DROP TABLE IF EXISTS public.conversations       CASCADE;
 DROP TABLE IF EXISTS public.notifications       CASCADE;
-DROP TABLE IF EXISTS public.adoption_requests   CASCADE;
-DROP TABLE IF EXISTS public.puppies             CASCADE;
+DROP TABLE IF EXISTS public.inquiries           CASCADE;
+DROP TABLE IF EXISTS public.parts               CASCADE;
 -- NOTE: public.users is NOT dropped — it references auth.users.
 --       We clean it with ALTER TABLE instead.
 
@@ -79,14 +81,14 @@ CREATE TRIGGER on_auth_user_created
 
 
 -- ============================================================
--- STEP 4: PUPPIES
+-- STEP 4: PARTS INVENTORY
 -- ============================================================
-CREATE TABLE public.puppies (
+CREATE TABLE public.parts (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   name        TEXT        NOT NULL,
-  age         TEXT,
-  gender      TEXT        CHECK (gender IN ('male', 'female')),
-  fee         NUMERIC,
+  model_year  TEXT,
+  category    TEXT        CHECK (category IN ('heavy-duty', 'performance')),
+  price       NUMERIC,
   status      TEXT        NOT NULL DEFAULT 'available' CHECK (status IN ('available', 'reserved', 'sold')),
   images      TEXT[]      NOT NULL DEFAULT '{}',
   description TEXT,
@@ -96,59 +98,43 @@ CREATE TABLE public.puppies (
 
 
 -- ============================================================
--- STEP 5: ADOPTION REQUESTS
+-- STEP 5: ORDERS (One per purchase)
 -- ============================================================
-CREATE TABLE public.adoption_requests (
+CREATE TABLE public.orders (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID        REFERENCES public.users(id)   ON DELETE CASCADE,
-  puppy_id    UUID        REFERENCES public.puppies(id) ON DELETE SET NULL,
   status      TEXT        NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  payment_status TEXT     NOT NULL DEFAULT 'unpaid' CHECK (payment_status IN ('unpaid', 'paid')),
+  shipping_status TEXT    NOT NULL DEFAULT 'pending' CHECK (shipping_status IN ('pending', 'shipped', 'delivered')),
+  total_price NUMERIC     NOT NULL DEFAULT 0,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-  -- Applicant
+  -- Recipient Information
   first_name        TEXT,
   last_name         TEXT,
   email             TEXT,
   phone             TEXT,
-  preferred_contact TEXT,
   address           TEXT,
   city              TEXT,
   state             TEXT,
   zip               TEXT,
 
-  -- Household
-  residence_type    TEXT,
-  rent_or_own       TEXT,
-  household_members TEXT,
-  other_pets        TEXT,
-  yard_fencing      TEXT,
-
-  -- Employment
-  occupation        TEXT,
-  work_hours        TEXT,
-  daytime_care      TEXT,
-
-  -- Preferences
-  size_preference   TEXT,
-  age_preference    TEXT,
-  gender_preference TEXT,
-  adoption_reason   TEXT,
-
-  -- Care & Commitment
-  pet_experience    TEXT,
-  vet_info          TEXT,
-  financial_ability BOOLEAN NOT NULL DEFAULT FALSE,
-  spay_neuter       BOOLEAN NOT NULL DEFAULT FALSE,
-  training_commitment BOOLEAN NOT NULL DEFAULT FALSE,
-
-  -- Legal
-  policies_ack      BOOLEAN NOT NULL DEFAULT FALSE,
-  home_visit_consent BOOLEAN NOT NULL DEFAULT FALSE,
-  signature         TEXT,
-
-  -- Payment
+  -- Payment & Notes
   payment_method    TEXT,
   notes             TEXT
+);
+
+-- ============================================================
+-- STEP 5.1: ORDER ITEMS
+-- ============================================================
+CREATE TABLE public.order_items (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id    UUID        REFERENCES public.orders(id)  ON DELETE CASCADE,
+  part_id     UUID        REFERENCES public.parts(id)   ON DELETE SET NULL,
+  quantity    INTEGER     NOT NULL DEFAULT 1,
+  unit_price  NUMERIC     NOT NULL,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 
@@ -204,8 +190,9 @@ CREATE TABLE public.push_subscriptions (
 -- STEP 10: ENABLE ROW LEVEL SECURITY
 -- ============================================================
 ALTER TABLE public.users             ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.puppies           ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.adoption_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.parts             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.order_items       ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.conversations     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages          ENABLE ROW LEVEL SECURITY;
@@ -238,32 +225,52 @@ CREATE POLICY "users_own" ON public.users
 CREATE POLICY "users_admin_read" ON public.users
   FOR SELECT USING (public.is_admin());
 
--- ── puppies ──
-DROP POLICY IF EXISTS "puppies_public_read" ON public.puppies;
-DROP POLICY IF EXISTS "puppies_admin_insert" ON public.puppies;
-DROP POLICY IF EXISTS "puppies_admin_update" ON public.puppies;
-DROP POLICY IF EXISTS "puppies_admin_delete" ON public.puppies;
+-- ── parts ──
+DROP POLICY IF EXISTS "parts_public_read" ON public.parts;
+DROP POLICY IF EXISTS "parts_admin_insert" ON public.parts;
+DROP POLICY IF EXISTS "parts_admin_update" ON public.parts;
+DROP POLICY IF EXISTS "parts_admin_delete" ON public.parts;
 
-CREATE POLICY "puppies_public_read" ON public.puppies
+CREATE POLICY "parts_public_read" ON public.parts
   FOR SELECT USING (true);
 
-CREATE POLICY "puppies_admin_insert" ON public.puppies
+CREATE POLICY "parts_admin_insert" ON public.parts
   FOR INSERT WITH CHECK (public.is_admin());
 
-CREATE POLICY "puppies_admin_update" ON public.puppies
+CREATE POLICY "parts_admin_update" ON public.parts
   FOR UPDATE USING (public.is_admin());
 
-CREATE POLICY "puppies_admin_delete" ON public.puppies
+CREATE POLICY "parts_admin_delete" ON public.parts
   FOR DELETE USING (public.is_admin());
 
--- ── adoption_requests ──
-DROP POLICY IF EXISTS "requests_own"   ON public.adoption_requests;
-DROP POLICY IF EXISTS "requests_admin" ON public.adoption_requests;
+-- ── orders ──
+DROP POLICY IF EXISTS "orders_own"   ON public.orders;
+DROP POLICY IF EXISTS "orders_admin" ON public.orders;
 
-CREATE POLICY "requests_own" ON public.adoption_requests
+CREATE POLICY "orders_own" ON public.orders
   FOR ALL USING (user_id = auth.uid());
 
-CREATE POLICY "requests_admin" ON public.adoption_requests
+CREATE POLICY "orders_admin" ON public.orders
+  FOR ALL USING (public.is_admin());
+
+-- ── order_items ──
+DROP POLICY IF EXISTS "order_items_own"   ON public.order_items;
+DROP POLICY IF EXISTS "order_items_admin" ON public.order_items;
+
+CREATE POLICY "order_items_own" ON public.order_items
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM public.orders o
+      WHERE o.id = order_id AND o.user_id = auth.uid()
+    )
+  ) WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.orders o
+      WHERE o.id = order_id AND o.user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "order_items_admin" ON public.order_items
   FOR ALL USING (public.is_admin());
 
 -- ── notifications ──

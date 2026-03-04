@@ -5,13 +5,21 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/supabase/context";
 import Link from "next/link";
-import { ClipboardList, Bell, PawPrint, CheckCircle, XCircle, Clock } from "lucide-react";
+import { ClipboardList, Bell, Truck, CheckCircle, XCircle, Clock, Package, ShieldCheck } from "lucide-react";
 
-interface AdoptionRequest {
+interface OrderItem {
+    id: string;
+    quantity: number;
+    part: { name: string; images: string[] };
+}
+
+interface Order {
     id: string;
     status: string;
     created_at: string;
-    puppy: { name: string; images: string[] };
+    total_price: number;
+    shipping_status: string;
+    order_items: OrderItem[];
 }
 
 interface Notification {
@@ -24,9 +32,9 @@ interface Notification {
 export default function DashboardPage() {
     const { user, loading } = useAuth();
     const router = useRouter();
-    const [requests, setRequests] = useState<AdoptionRequest[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
     const [notifications, setNotifications] = useState<Notification[]>([]);
-    const [tab, setTab] = useState<"requests" | "notifications">("requests");
+    const [tab, setTab] = useState<"inquiries" | "alerts">("inquiries");
 
     useEffect(() => {
         if (!loading && !user) router.push("/login");
@@ -38,8 +46,8 @@ export default function DashboardPage() {
         async function fetchData() {
             const [{ data: reqs }, { data: notifs }] = await Promise.all([
                 supabase
-                    .from("adoption_requests")
-                    .select("id, status, created_at, puppy:puppies(name, images)")
+                    .from("orders")
+                    .select("id, status, created_at, total_price, shipping_status, order_items(id, quantity, part:parts(name, images))")
                     .eq("user_id", user!.id)
                     .order("created_at", { ascending: false }),
                 supabase
@@ -49,17 +57,16 @@ export default function DashboardPage() {
                     .order("created_at", { ascending: false })
                     .limit(20),
             ]);
-            setRequests((reqs as unknown as AdoptionRequest[]) ?? []);
+            setOrders((reqs as unknown as Order[]) ?? []);
             setNotifications((notifs as Notification[]) ?? []);
         }
         fetchData();
 
-        // Real-time subscriptions for multi-tab sync
         const channel = supabase
             .channel(`dashboard-${user.id}`)
             .on(
                 "postgres_changes",
-                { event: "*", filter: `user_id=eq.${user.id}`, schema: "public", table: "adoption_requests" },
+                { event: "*", filter: `user_id=eq.${user.id}`, schema: "public", table: "orders" },
                 () => fetchData()
             )
             .on(
@@ -76,36 +83,46 @@ export default function DashboardPage() {
 
     const markRead = async (id: string) => {
         await supabase.from("notifications").update({ read: true }).eq("id", id);
-        // Optimistic update (handled by real-time sync as well)
         setNotifications((n) => n.map((x) => (x.id === id ? { ...x, read: true } : x)));
     };
 
     const statusIcon = (s: string) =>
-        s === "approved" ? <CheckCircle className="w-4 h-4 text-emerald-500" /> :
-            s === "rejected" ? <XCircle className="w-4 h-4 text-red-500" /> :
-                <Clock className="w-4 h-4 text-amber-500" />;
+        s === "approved" ? <CheckCircle className="w-5 h-5 text-emerald-500" /> :
+            s === "rejected" ? <XCircle className="w-5 h-5 text-red-500" /> :
+                <Clock className="w-5 h-5 text-amber-500" />;
 
-    if (loading) return <div className="min-h-screen bg-cream-50 flex items-center justify-center"><div className="skeleton w-32 h-8 rounded-lg" /></div>;
+    if (loading) return (
+        <div className="min-h-screen bg-charcoal-900 flex items-center justify-center font-sans">
+            <div className="w-16 h-16 border-4 border-amber-500/10 border-t-amber-500 rounded-full animate-spin" />
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-cream-50">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-                <h1 className="font-display text-4xl font-bold text-brown-900 mb-2">My Dashboard</h1>
-                <p className="text-brown-800/60 mb-8">Track your adoption requests and notifications.</p>
+        <div className="min-h-screen bg-charcoal-900 font-sans">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+                <div className="mb-12">
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] uppercase font-black tracking-[0.3em] mb-4">
+                        User Interface
+                    </span>
+                    <h1 className="font-display text-5xl font-black text-white mb-4 uppercase tracking-tighter">Command <span className="text-amber-500">Center.</span></h1>
+                    <p className="text-surface-200/40 font-medium text-lg">Monitor your active unit inquiries and logistics updates.</p>
+                </div>
 
                 {/* Tabs */}
-                <div className="flex gap-1 bg-cream-100 border border-cream-200 rounded-xl p-1 w-fit mb-8">
-                    {(["requests", "notifications"] as const).map((t) => (
+                <div className="flex gap-2 bg-charcoal-800 border border-white/5 rounded-2xl p-1.5 w-fit mb-12 shadow-xl">
+                    {(["inquiries", "alerts"] as const).map((t) => (
                         <button
                             key={t}
                             onClick={() => setTab(t)}
-                            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${tab === t ? "bg-sand-600 text-cream-50 shadow-sm" : "text-brown-800/70 hover:text-brown-900"
+                            className={`flex items-center gap-3 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${tab === t
+                                ? "bg-amber-500 text-charcoal-950 shadow-lg shadow-amber-500/10"
+                                : "text-surface-200/40 hover:text-white"
                                 }`}
                         >
-                            {t === "requests" ? <ClipboardList className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
+                            {t === "inquiries" ? <Package className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
                             {t}
-                            {t === "notifications" && notifications.filter((n) => !n.read).length > 0 && (
-                                <span className="ml-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                            {t === "alerts" && notifications.filter((n) => !n.read).length > 0 && (
+                                <span className="ml-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center shadow-lg">
                                     {notifications.filter((n) => !n.read).length}
                                 </span>
                             )}
@@ -113,55 +130,82 @@ export default function DashboardPage() {
                     ))}
                 </div>
 
-                {tab === "requests" ? (
-                    requests.length === 0 ? (
-                        <div className="text-center py-16 text-brown-800/50">
-                            <PawPrint className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                            <p className="text-lg font-medium">No adoption requests yet</p>
-                            <Link href="/browse" className="text-sand-600 hover:underline text-sm mt-2 block">Browse available puppies</Link>
+                {tab === "inquiries" ? (
+                    orders.length === 0 ? (
+                        <div className="text-center py-24 bg-charcoal-800 border border-white/5 rounded-[40px] shadow-2xl">
+                            <Truck className="w-16 h-16 mx-auto mb-6 text-surface-200/10" />
+                            <p className="text-xl font-black text-white uppercase tracking-tight mb-4">No Active Records</p>
+                            <Link href="/browse" className="inline-flex items-center gap-2 text-amber-500 font-black uppercase tracking-[0.2em] text-[10px] hover:text-amber-400 transition-all">
+                                [ Browse Industrial Inventory ]
+                            </Link>
                         </div>
                     ) : (
-                        <div className="space-y-4">
-                            {requests.map((req) => (
-                                <div key={req.id} className="bg-cream-100 border border-cream-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-4">
-                                    <div className="flex items-center gap-4 flex-1">
-                                        <div className="w-16 h-16 rounded-xl bg-cream-200 overflow-hidden shrink-0">
-                                            {req.puppy?.images?.[0] ? (
-                                                <img src={req.puppy.images[0]} alt={req.puppy.name} className="w-full h-full object-cover" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-2xl">🐾</div>
-                                            )}
+                        <div className="grid gap-6">
+                            {orders.map((order) => {
+                                const mainItem = order.order_items?.[0];
+                                const extraCount = (order.order_items?.length ?? 0) - 1;
+
+                                return (
+                                    <div key={order.id} className="bg-charcoal-800 border border-white/5 rounded-[32px] p-6 flex flex-col sm:flex-row sm:items-center gap-6 group hover:border-amber-500/20 transition-all shadow-xl">
+                                        <div className="flex items-center gap-6 flex-1">
+                                            <div className="w-24 h-24 rounded-2xl bg-charcoal-900 border border-white/5 overflow-hidden shrink-0 group-hover:border-amber-500/30 transition-all relative">
+                                                {mainItem?.part?.images?.[0] ? (
+                                                    <img src={mainItem.part.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        <Package className="w-8 h-8 text-surface-200/10" />
+                                                    </div>
+                                                )}
+                                                {extraCount > 0 && (
+                                                    <div className="absolute inset-0 bg-charcoal-950/60 backdrop-blur-sm flex items-center justify-center pointer-events-none">
+                                                        <span className="text-white font-black text-xs">+{extraCount} More</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <h3 className="font-display text-2xl font-black text-white uppercase tracking-tight truncate group-hover:text-amber-500 transition-colors">
+                                                    {mainItem?.part?.name || "Order Request"}
+                                                </h3>
+                                                <p className="text-[10px] font-black text-surface-200/20 uppercase tracking-[0.2em] mt-2">
+                                                    ID: {order.id.substring(0, 8).toUpperCase()} · {new Date(order.created_at).toLocaleDateString()} · ${order.total_price.toLocaleString()}
+                                                </p>
+                                                <p className="text-[8px] font-black text-amber-500/60 uppercase tracking-widest mt-1">
+                                                    Logistics Stage: {order.shipping_status}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="min-w-0">
-                                            <h3 className="font-semibold text-brown-900 truncate">{req.puppy?.name}</h3>
-                                            <p className="text-xs text-brown-800/50 mt-0.5">{new Date(req.created_at).toLocaleDateString()}</p>
+                                        <div className="flex items-center gap-3 px-6 py-3 bg-charcoal-900 border border-white/5 rounded-2xl shadow-inner">
+                                            {statusIcon(order.status)}
+                                            <span className="text-xs font-black uppercase tracking-widest text-white">{order.status}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-1.5 pt-3 sm:pt-0 border-t sm:border-t-0 border-cream-200/50">
-                                        {statusIcon(req.status)}
-                                        <span className="text-sm font-medium capitalize text-brown-800">{req.status}</span>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )
                 ) : (
                     notifications.length === 0 ? (
-                        <div className="text-center py-16 text-brown-800/50">
-                            <Bell className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                            <p className="text-lg font-medium">No notifications yet</p>
+                        <div className="text-center py-24 bg-charcoal-800 border border-white/5 rounded-[40px] shadow-2xl">
+                            <Bell className="w-16 h-16 mx-auto mb-6 text-surface-200/10" />
+                            <p className="text-xl font-black text-white uppercase tracking-tight">System Status Nominal</p>
+                            <p className="text-surface-200/20 text-xs font-medium mt-2">Historical logs empty</p>
                         </div>
                     ) : (
-                        <div className="space-y-3">
+                        <div className="grid gap-4">
                             {notifications.map((n) => (
                                 <div
                                     key={n.id}
                                     onClick={() => !n.read && markRead(n.id)}
-                                    className={`p-4 rounded-2xl border cursor-pointer transition-colors ${n.read ? "bg-cream-100 border-cream-200 opacity-70" : "bg-sand-500/5 border-sand-400/30 hover:bg-sand-500/10"
+                                    className={`p-6 rounded-[24px] border cursor-pointer transition-all ${n.read
+                                        ? "bg-charcoal-800/50 border-white/5 opacity-40"
+                                        : "bg-charcoal-800 border-amber-500/20 hover:border-amber-500/40 shadow-xl"
                                         }`}
                                 >
-                                    <p className="text-sm text-brown-800">{n.message}</p>
-                                    <p className="text-xs text-brown-800/40 mt-1">{new Date(n.created_at).toLocaleString()}</p>
+                                    <p className="text-sm text-white font-medium leading-relaxed">{n.message}</p>
+                                    <p className="text-[10px] font-black text-surface-200/20 uppercase tracking-widest mt-4 flex items-center gap-2">
+                                        <Clock className="w-3 h-3" />
+                                        {new Date(n.created_at).toLocaleString()}
+                                    </p>
                                 </div>
                             ))}
                         </div>

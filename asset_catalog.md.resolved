@@ -1,0 +1,33 @@
+# Apex Truck Parts: Premium Asset Catalog
+
+I have generated a professional suite of high-end product assets for the Apex Truck Parts inventory. Instead of using low-quality web downloads, I have created bespoke, consistent, and premium studio photography for our core product lines.
+
+````carousel
+![Apex Pro Aluminum Flatbed](file:///home/philding/.gemini/antigravity/brain/1979d4aa-1d95-42b4-a9b0-8eae798fe699/apex_aluminum_flatbed_hero_1772612718286.png)
+**Apex Pro Ultra-Light Aluminum Flatbed**  
+*Technical Specs:* 6000-series aluminum, modular weldless design, reinforced headache rack.
+<!-- slide -->
+![Guardian Underbody Storage](file:///home/philding/.gemini/antigravity/brain/1979d4aa-1d95-42b4-a9b0-8eae798fe699/guardian_underbody_storage_1772612734686.png)
+**Guardian Underbody Storage Unit (48")**  
+*Technical Specs:* .125 gauge diamond plate, neoprene gaskets, stainless steel T-handle locks.
+<!-- slide -->
+![IronRidge Leaf Springs](file:///home/philding/.gemini/antigravity/brain/1979d4aa-1d95-42b4-a9b0-8eae798fe699/ironridge_leaf_springs_1772612747476.png)
+**IronRidge Heavy-Haul Leaf Spring Kit**  
+*Technical Specs:* High-tensile steel alloys, 12,000 lbs capacity, corrosion-resistant E-coat.
+<!-- slide -->
+![Apex Air-Ride System](file:///home/philding/.gemini/antigravity/brain/1979d4aa-1d95-42b4-a9b0-8eae798fe699/apex_air_ride_system_1772612778755.png)
+**Apex Precision Air-Ride System**  
+*Technical Specs:* Adaptive air-ride technology, digital cabin interface, active load-sensing.
+<!-- slide -->
+![StealthSeries Toolbox](file:///home/philding/.gemini/antigravity/brain/1979d4aa-1d95-42b4-a9b0-8eae798fe699/stealthseries_toolbox_1772612793117.png)
+**StealthSeries Black Diamond Toolbox**  
+*Technical Specs:* Matte black powder coat, low-profile crossover design, whale-tail handle.
+<!-- slide -->
+![Apex Winch Plate](file:///home/philding/.gemini/antigravity/brain/1979d4aa-1d95-42b4-a9b0-8eae798fe699/apex_winch_plate_1772612808445.png)
+**Apex Heavy Duty Winch Plate (Modular)**  
+*Technical Specs:* A36 structural steel, 16,500 lbs rating, industrial grit powder coat.
+````
+
+## Implementation Notes
+- **Seeding Script**: A Node.js seeding script has been created at [/tmp/seed_inventory.js](file:///tmp/seed_inventory.js) to populate the Supabase database with these products.
+- **Data Compliance**: Categories have been mapped to `heavy-duty` and `performance` to match the existing SQL schema constraints.

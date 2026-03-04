@@ -1,133 +1,139 @@
 import type { Metadata } from "next";
-import { Heart, Home, Baby, Award } from "lucide-react";
+import { ShieldCheck, PenTool as Tool, Truck, Award, Gauge, Zap, Cog } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "About Our Sanctuary",
-    description: "Learn about Ellie's Bichon Frise Sanctuary — our story, our breeding philosophy, and the love we put into every puppy.",
+    title: "About Apex Truck Parts & Beds",
+    description: "Learn about the legacy of Apex Truck Parts — our engineering standards, our industrial roots, and our commitment to the road.",
 };
 
 const values = [
-    { icon: Heart, title: "Raised With Love", desc: "Every puppy is treated as a member of our own family from birth." },
-    { icon: Home, title: "Home Environment", desc: "Our puppies grow up in a warm home setting, not in kennels." },
-    { icon: Baby, title: "Early Socialization", desc: "Puppies are exposed to sounds, people, and experiences from day one." },
-    { icon: Award, title: "Champion Lines", desc: "Our breeding stock comes from champion AKC-registered bloodlines." },
+    { icon: ShieldCheck, title: "Industrial Warranty", desc: "Every component is backed by an industry-leading multi-year performance warranty." },
+    { icon: Tool, title: "Precision Engineered", desc: "Our parts are manufactured to exact OEM specifications using high-grade steel." },
+    { icon: Truck, title: "Heavy Duty Hardware", desc: "Built for the toughest environments, from construction sites to cross-country hauls." },
+    { icon: Award, title: "Certified Quality", desc: "ISO 9001 certified manufacturing process ensuring consistent reliability." },
 ];
 
-// Real Bichon Frise photos
-const BICHON = {
-    story: "https://images.unsplash.com/photo-1731315099269-38d767b7e50a?auto=format&fit=crop&w=700&q=80",
-    parent1: "https://images.unsplash.com/photo-1652900186700-1266fdafd5a7?auto=format&fit=crop&w=400&q=80",
-    parent2: "https://images.unsplash.com/photo-1687632922201-164b5f753635?auto=format&fit=crop&w=400&q=80",
-    parent3: "https://images.unsplash.com/photo-1728154638508-9a45e9007506?auto=format&fit=crop&w=400&q=80",
-    gallery1: "https://images.unsplash.com/photo-1537123547273-e59f4f437f1b?auto=format&fit=crop&w=400&q=80",
-    gallery2: "https://images.unsplash.com/photo-1700684072190-23b8b87900cc?auto=format&fit=crop&w=400&q=80",
-    gallery3: "https://images.unsplash.com/photo-1665932561487-726ebfb2c74f?auto=format&fit=crop&w=400&q=80",
+const IMAGES = {
+    story: "/assets/restoration/workshop.png", // Restored High-end workshop
+    item1: "https://images.unsplash.com/photo-1501700493788-fa1a4fc9fe62?auto=format&fit=crop&w=400&q=80", // Truck assembly
+    item2: "/assets/restoration/shocks.png", // Restored Titan Shocks
+    item3: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=400&q=80", // Heavy Truck
+    gallery1: "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&w=400&q=80", // Machining
+    gallery2: "/assets/restoration/suspension.png", // Restored Suspension component
+    gallery3: "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?auto=format&fit=crop&w=400&q=80", // Metal fabrication
 };
 
 export default function AboutPage() {
     return (
-        <div className="min-h-screen bg-cream-50">
+        <div className="min-h-screen bg-charcoal-900">
             {/* Hero */}
-            <section className="bg-cream-100 border-b border-cream-200 py-20">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
+            <section className="bg-charcoal-800 border-b border-surface-200/5 py-24 relative overflow-hidden shadow-2xl">
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-amber-500/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-20 items-center">
                     <div>
-                        <p className="text-sm font-semibold text-sand-600 uppercase tracking-widest mb-3">Our Story</p>
-                        <h1 className="font-display text-4xl sm:text-6xl font-bold text-brown-900 mb-6 line-tight">
-                            About Ellie&apos;s Sanctuary
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] uppercase font-black tracking-[0.3em] mb-8">
+                            Our Legacy
+                        </span>
+                        <h1 className="font-display text-5xl sm:text-7xl font-black text-surface-50 mb-8 leading-[0.9] tracking-tighter uppercase">
+                            ENGINEERED FOR <br />
+                            <span className="text-amber-500">STRENGTH.</span>
                         </h1>
-                        <p className="text-lg text-brown-800/70 leading-relaxed">
-                            What started as a passion for the joyful, gentle Bichon Frise breed has grown into
-                            a dedicated sanctuary committed to matching families with their perfect fluffy companions.
+                        <p className="text-lg text-surface-200/60 leading-relaxed font-medium">
+                            Apex Truck Parts began in a small fabrication shop with a single goal:
+                            to build truck components that actually last. Today, we are a leading
+                            provider of heavy-duty hardware and custom beds for the industrial sector.
                         </p>
                     </div>
                     <div className="relative">
-                        <div className="rounded-3xl overflow-hidden aspect-[4/3] sm:h-80 shadow-xl">
-                            <img src={BICHON.story} alt="Bichon Frise at the sanctuary" className="w-full h-full object-cover" />
+                        <div className="rounded-[40px] overflow-hidden aspect-[4/3] shadow-2xl border border-surface-200/10 group">
+                            <img src={IMAGES.story} alt="Apex Workshop" className="w-full h-full object-cover" />
                         </div>
-                        {/* Small inset - hidden on smallest screens */}
-                        <div className="absolute -bottom-4 -left-4 w-20 h-20 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 border-cream-50 shadow-lg hidden xs:block">
-                            <img src={BICHON.gallery1} alt="Bichon Frise puppy" className="w-full h-full object-cover" />
+                        <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-3xl overflow-hidden border-8 border-charcoal-800 shadow-2xl hidden xs:block">
+                            <img src={IMAGES.gallery1} alt="Fabrication" className="w-full h-full object-cover" />
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* Story */}
-            <section className="py-16 max-w-5xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <h2 className="font-display text-3xl font-bold text-brown-900 mb-4">How It All Began</h2>
-                    <div className="space-y-4 text-brown-800/70 leading-relaxed">
+            <section className="py-32 max-w-6xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-20 items-center">
+                <div className="order-2 md:order-1">
+                    <h2 className="font-display text-4xl font-black text-surface-50 mb-8 uppercase tracking-tight">The Apex Standard</h2>
+                    <div className="space-y-6 text-surface-200/60 leading-relaxed font-medium text-lg">
                         <p>
-                            Ellie fell in love with Bichon Frises over a decade ago when she brought home her first
-                            puppy, Bella. The breed&apos;s cheerful temperament, hypoallergenic coat, and unwavering
-                            loyalty captured her heart completely.
+                            Founded by master engineer Elias Bichon (formerly of European aerospace), Apex was
+                            born from a necessity for better reliability in the heavy transport industry.
+                            We saw too many components failing under standard loads.
                         </p>
                         <p>
-                            After years of research, working with veterinarians, and participating in Bichon clubs,
-                            Ellie launched her sanctuary with a simple mission: breed healthy, happy Bichon Frises
-                            and find them loving forever homes.
+                            After years of testing and refining our proprietary alloys and fabrication techniques,
+                            Apex launched its current lineup of custom truck beds and performance hardware.
+                            Every weld is inspected; every bolt is torqued to precision.
                         </p>
                         <p>
-                            Today, every puppy that leaves our care is vet-checked, vaccinated, microchipped, and
-                            comes with our comprehensive health guarantee — because we believe every family deserves
-                            a healthy, happy companion.
+                            Today, every part that leaves our facility is certified for the most demanding
+                            environments. We don&apos;t just sell parts — we sell the peace of mind that
+                            your fleet will never let you down.
                         </p>
                     </div>
                 </div>
                 {/* Photo grid */}
-                <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl overflow-hidden h-44 col-span-2">
-                        <img src={BICHON.gallery2} alt="Bichon Frise family" className="w-full h-full object-cover" />
+                <div className="grid grid-cols-2 gap-4 order-1 md:order-2">
+                    <div className="rounded-[32px] overflow-hidden h-56 col-span-2 border border-surface-200/5">
+                        <img src={IMAGES.gallery2} alt="Suspension unit" className="w-full h-full object-cover" />
                     </div>
-                    <div className="rounded-2xl overflow-hidden h-36">
-                        <img src={BICHON.gallery1} alt="Bichon Frise puppy" className="w-full h-full object-cover" />
+                    <div className="rounded-[24px] overflow-hidden h-44 border border-surface-200/5">
+                        <img src={IMAGES.gallery1} alt="Precision gear" className="w-full h-full object-cover" />
                     </div>
-                    <div className="rounded-2xl overflow-hidden h-36">
-                        <img src={BICHON.gallery3} alt="Bichon Frise playing" className="w-full h-full object-cover" />
+                    <div className="rounded-[24px] overflow-hidden h-44 border border-surface-200/5">
+                        <img src={IMAGES.gallery3} alt="Assembly line" className="w-full h-full object-cover" />
                     </div>
                 </div>
             </section>
 
             {/* Values */}
-            <section className="py-16 bg-cream-100 border-y border-cream-200">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6">
-                    <h2 className="font-display text-3xl font-bold text-brown-900 text-center mb-10">
-                        Our Breeding Philosophy
-                    </h2>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <section className="py-32 bg-charcoal-800 border-y border-surface-200/5 shadow-2xl">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6">
+                    <div className="text-center mb-20">
+                        <h2 className="font-display text-4xl font-black text-surface-50 mb-4 uppercase tracking-tight">
+                            Core Engineering <span className="text-amber-500">Standards</span>
+                        </h2>
+                        <div className="w-24 h-1 bg-amber-500 mx-auto" />
+                    </div>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
                         {values.map(({ icon: Icon, title, desc }) => (
-                            <div key={title} className="bg-cream-50 border border-cream-200 rounded-2xl p-5">
-                                <div className="w-10 h-10 rounded-xl bg-sand-500/15 flex items-center justify-center mb-4">
-                                    <Icon className="w-5 h-5 text-sand-600" />
+                            <div key={title} className="bg-charcoal-900 border border-surface-200/5 rounded-[32px] p-8 hover:border-amber-500/20 transition-all group shadow-xl">
+                                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-6 border border-amber-500/20 group-hover:bg-amber-600 transition-all">
+                                    <Icon className="w-7 h-7 text-amber-600 group-hover:text-charcoal-950 transition-all" />
                                 </div>
-                                <h3 className="font-semibold text-brown-900 mb-2">{title}</h3>
-                                <p className="text-sm text-brown-800/60 leading-relaxed">{desc}</p>
+                                <h3 className="font-display font-black text-surface-50 mb-4 uppercase tracking-wider">{title}</h3>
+                                <p className="text-sm text-surface-200/60 leading-relaxed font-medium">{desc}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Parents section */}
-            <section className="py-16 max-w-5xl mx-auto px-4 sm:px-6 text-center">
-                <h2 className="font-display text-3xl font-bold text-brown-900 mb-4">Meet Our Parent Dogs</h2>
-                <p className="text-brown-800/60 mb-10 max-w-xl mx-auto">
-                    Our breeding stock consists of health-tested, AKC-registered Bichon Frises with
-                    champion pedigrees and outstanding temperaments.
+            {/* Core Inventory section */}
+            <section className="py-32 max-w-6xl mx-auto px-4 sm:px-6 text-center">
+                <h2 className="font-display text-4xl font-black text-surface-50 mb-6 uppercase tracking-tight">Core Inventory</h2>
+                <p className="text-surface-200/60 mb-16 max-w-2xl mx-auto text-lg font-medium">
+                    Our standard inventory consists of high-performance components certified for heavy-duty
+                    applications across all major truck platforms.
                 </p>
-                <div className="grid sm:grid-cols-3 gap-6">
+                <div className="grid sm:grid-cols-3 gap-8">
                     {[
-                        { name: "Bella", role: "Dam", img: BICHON.parent1 },
-                        { name: "Charlie", role: "Sire", img: BICHON.parent2 },
-                        { name: "Daisy", role: "Dam", img: BICHON.parent3 },
+                        { name: "AX-Series Bed", role: "Flatbed", img: IMAGES.item1 },
+                        { name: "Titan Shocks", role: "Suspension", img: IMAGES.item2 },
+                        { name: "DuraGear-9", role: "Transmission", img: IMAGES.item3 },
                     ].map(({ name, role, img }) => (
-                        <div key={name} className="bg-cream-100 border border-cream-200 rounded-2xl overflow-hidden">
-                            <div className="h-56 bg-cream-200">
-                                <img src={img} alt={name} className="w-full h-full object-cover" />
+                        <div key={name} className="bg-charcoal-800 border border-surface-200/5 rounded-[40px] overflow-hidden group hover:border-amber-500/30 transition-all shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+                            <div className="h-64 bg-charcoal-900 overflow-hidden">
+                                <img src={img} alt={name} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" />
                             </div>
-                            <div className="p-4">
-                                <h3 className="font-display text-xl font-bold text-brown-900">{name}</h3>
-                                <p className="text-sm text-sand-600">{role} · Bichon Frise</p>
+                            <div className="p-8">
+                                <h3 className="font-display text-2xl font-black text-surface-50 uppercase tracking-tight">{name}</h3>
+                                <p className="text-sm text-amber-600 font-bold uppercase tracking-widest mt-2">{role} · Performance Grade</p>
                             </div>
                         </div>
                     ))}

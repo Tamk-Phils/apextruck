@@ -1,23 +1,23 @@
 import Link from "next/link";
-import { PawPrint, Heart, Phone, Mail, MapPin } from "lucide-react";
+import { Truck, Heart, Phone, Mail, MapPin, ShieldCheck, PenTool as Tool, MessageSquare } from "lucide-react";
 
 const footerSections = [
     {
-        title: "Our Puppies",
+        title: "Products",
         links: [
-            { label: "Browse All Puppies", href: "/browse" },
-            { label: "About Our Sanctuary", href: "/about" },
-            { label: "Adoption Process", href: "/faq" },
-            { label: "Contact Us", href: "/contact" },
+            { label: "Browse All Parts", href: "/browse" },
+            { label: "Custom Truck Beds", href: "/browse" },
+            { label: "Hardware & Tools", href: "/browse" },
+            { label: "Fleet Solutions", href: "/contact" },
         ],
     },
     {
-        title: "Resources",
+        title: "Support",
         links: [
-            { label: "Health Guarantee", href: "/health-guarantee" },
-            { label: "Care & Training", href: "/care-and-training" },
-            { label: "Shipping & Delivery", href: "/shipping" },
-            { label: "FAQ", href: "/faq" },
+            { label: "Quality Guarantee", href: "/warranty" },
+            { label: "Technical Guides", href: "/maintenance" },
+            { label: "Freight & Shipping", href: "/shipping" },
+            { label: "Technical FAQ", href: "/faq" },
         ],
     },
     {
@@ -25,53 +25,55 @@ const footerSections = [
         links: [
             { label: "Sign In", href: "/login" },
             { label: "Create Account", href: "/register" },
-            { label: "My Dashboard", href: "/dashboard" },
-            { label: "My Chat", href: "/chat" },
+            { label: "Fleet Dashboard", href: "/dashboard" },
+            { label: "Support Chat", href: "/chat" },
         ],
     },
 ];
 
 export default function Footer() {
     return (
-        <footer className="bg-brown-900 text-cream-100">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <footer className="bg-charcoal-950 text-surface-200 border-t border-white/5">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand */}
-                    <div>
-                        <div className="flex items-center gap-2 mb-4 justify-center md:justify-start">
-                            <PawPrint className="w-6 h-6 text-sand-500" />
-                            <span className="font-display text-lg font-semibold text-cream-50">
-                                Ellie&apos;s Bichon Frise
+                    <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center">
+                                <Truck className="w-5 h-5 text-charcoal-950" />
+                            </div>
+                            <span className="font-display text-xl font-bold text-white tracking-tight">
+                                APEX<span className="text-amber-500 text-xs ml-1 font-black uppercase tracking-widest">Parts</span>
                             </span>
                         </div>
-                        <p className="text-sm text-cream-200/70 mb-4 leading-relaxed text-center md:text-left">
-                            Raising happy, healthy Bichon Frise puppies with love and dedication.
-                            Your forever companion awaits.
+                        <p className="text-sm text-surface-200/60 mb-8 leading-relaxed max-w-xs">
+                            Premium truck parts and custom beds engineered for performance and durability.
+                            Built for those who demand the best for their fleet.
                         </p>
-                        <div className="space-y-2 flex flex-col items-center md:items-start">
-                            <div className="flex items-center gap-2 text-sm text-cream-200/70">
-                                <Mail className="w-4 h-4 text-sand-500 shrink-0" />
-                                <span>adminsupport@eliesbichon.com</span>
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 text-sm text-surface-200/60 hover:text-amber-500 transition-colors">
+                                <Mail className="w-4 h-4 text-amber-500" />
+                                <span>support@apextruckparts.com</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-cream-200/70">
-                                <MapPin className="w-4 h-4 text-sand-500 shrink-0" />
-                                <span>United States</span>
+                            <div className="flex items-center gap-3 text-sm text-surface-200/60">
+                                <MapPin className="w-4 h-4 text-amber-500" />
+                                <span>Industrial District, USA</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Links */}
                     {footerSections.map((section) => (
-                        <div key={section.title}>
-                            <h4 className="font-semibold text-cream-50 mb-4 text-sm uppercase tracking-wide text-center md:text-left">
+                        <div key={section.title} className="text-center md:text-left">
+                            <h4 className="font-black text-white mb-6 text-xs uppercase tracking-[0.2em]">
                                 {section.title}
                             </h4>
-                            <ul className="space-y-2 text-center md:text-left">
+                            <ul className="space-y-3">
                                 {section.links.map((link) => (
-                                    <li key={link.href}>
+                                    <li key={link.label}>
                                         <Link
                                             href={link.href}
-                                            className="text-sm text-cream-200/70 hover:text-sand-400 transition-colors"
+                                            className="text-sm text-surface-200/60 hover:text-amber-500 transition-colors"
                                         >
                                             {link.label}
                                         </Link>
@@ -82,12 +84,12 @@ export default function Footer() {
                     ))}
                 </div>
 
-                <div className="border-t border-cream-200/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-sm text-cream-200/50">
-                        © {new Date().getFullYear()} Ellie&apos;s Bichon Frise Sanctuary. All rights reserved.
+                <div className="border-t border-white/5 pt-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <p className="text-xs font-medium text-surface-200/30 uppercase tracking-widest">
+                        © {new Date().getFullYear()} Apex Truck Parts & Beds. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-1 text-sm text-cream-200/50">
-                        Made with <Heart className="w-4 h-4 text-sand-500 mx-1" /> for Bichon lovers
+                    <div className="flex items-center gap-2 text-xs font-medium text-surface-200/30 uppercase tracking-[0.2em]">
+                        Engineered with <Heart className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> for the road
                     </div>
                 </div>
             </div>

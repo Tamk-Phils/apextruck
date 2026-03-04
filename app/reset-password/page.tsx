@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { PawPrint, KeyRound, CheckCircle } from "lucide-react";
+import { ShieldCheck, KeyRound, CheckCircle } from "lucide-react";
 
 function ResetForm() {
     const router = useRouter();
@@ -24,13 +24,11 @@ function ResetForm() {
             const code = searchParams.get("code");
 
             try {
-                // 1. Handle PKCE flow (?code=...)
                 if (code) {
                     const { error } = await supabase.auth.exchangeCodeForSession(code);
                     if (error) throw error;
                     setSessionReady(true);
                 }
-                // 2. Handle Implicit flow (#access_token=...)
                 else if (hash.includes("access_token")) {
                     const params = new URLSearchParams(hash.substring(1));
                     const access_token = params.get("access_token");
@@ -41,14 +39,13 @@ function ResetForm() {
                         setSessionReady(true);
                     }
                 }
-                // 3. Fallback: check if we already have a session from onAuthStateChange
                 else {
                     const { data: { session } } = await supabase.auth.getSession();
                     if (session) setSessionReady(true);
                 }
             } catch (err: any) {
                 console.error("Auth recovery error:", err);
-                setError("Your password reset link is invalid or has expired.");
+                setError("Verification failed. Protocol link invalid or expired.");
             } finally {
                 setChecking(false);
             }
@@ -59,15 +56,14 @@ function ResetForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Double check session
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-            setError("Auth session missing! Please request a new link.");
+            setError("Session terminated! Request new restoration link.");
             return;
         }
 
-        if (password !== confirm) { setError("Passwords do not match."); return; }
-        if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
+        if (password !== confirm) { setError("Credential mismatch. Passwords must be identical."); return; }
+        if (password.length < 8) { setError("Complexity error: Minimum 8 characters required."); return; }
 
         setLoading(true);
         setError("");
@@ -84,10 +80,10 @@ function ResetForm() {
 
     if (checking) {
         return (
-            <div className="min-h-screen bg-cream-50 flex items-center justify-center">
+            <div className="min-h-screen bg-charcoal-900 flex items-center justify-center font-sans">
                 <div className="text-center">
-                    <div className="skeleton w-12 h-12 rounded-full mx-auto mb-4" />
-                    <p className="text-brown-800/40 text-sm">Verifying your reset link…</p>
+                    <div className="w-16 h-16 border-4 border-amber-500/10 border-t-amber-500 rounded-full animate-spin mx-auto mb-8" />
+                    <p className="text-surface-200/30 text-[10px] font-black uppercase tracking-[0.2em]">Authenticating Link…</p>
                 </div>
             </div>
         );
@@ -95,18 +91,18 @@ function ResetForm() {
 
     if (!sessionReady && !done) {
         return (
-            <div className="min-h-screen bg-cream-50 flex items-center justify-center px-4">
-                <div className="w-full max-w-md bg-cream-100 border border-cream-200 rounded-2xl p-8 text-center shadow-sm">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-100 mb-4">
-                        <KeyRound className="w-7 h-7 text-red-600" />
+            <div className="min-h-screen bg-charcoal-900 flex items-center justify-center px-4 font-sans">
+                <div className="w-full max-w-md bg-charcoal-800 border border-white/5 rounded-[32px] p-10 text-center shadow-2xl">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-500/10 mb-8 border border-red-500/20">
+                        <KeyRound className="w-10 h-10 text-red-500" />
                     </div>
-                    <h2 className="font-semibold text-brown-900 mb-2">Invalid Reset Link</h2>
-                    <p className="text-sm text-brown-800/60 mb-6">
-                        The reset link is missing, invalid, or has expired. Please request a new password reset email.
+                    <h2 className="font-display text-2xl font-black text-white mb-4 uppercase tracking-tight">Access Prohibited</h2>
+                    <p className="text-surface-200/40 text-sm font-medium leading-relaxed mb-8">
+                        The restoration security token is invalid, expired, or corrupted. Please request a new dispatch.
                     </p>
                     <Link href="/forgot-password"
-                        className="inline-block px-6 py-2.5 bg-sand-600 text-cream-50 rounded-xl font-medium hover:bg-sand-700 transition-colors">
-                        Request New Link
+                        className="inline-block px-10 py-4 bg-amber-500 text-charcoal-950 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-amber-600 transition-all shadow-xl shadow-amber-500/20">
+                        Request New Dispatch
                     </Link>
                 </div>
             </div>
@@ -114,31 +110,33 @@ function ResetForm() {
     }
 
     return (
-        <div className="min-h-screen bg-cream-50 flex items-center justify-center px-4">
+        <div className="min-h-screen bg-charcoal-900 flex items-center justify-center px-4 font-sans">
             <div className="w-full max-w-md">
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-sand-500/15 mb-4">
-                        <PawPrint className="w-7 h-7 text-sand-600" />
+                <div className="text-center mb-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 mb-6 border border-amber-500/20">
+                        <ShieldCheck className="w-8 h-8 text-amber-500" />
                     </div>
-                    <h1 className="font-display text-3xl font-bold text-brown-900 mb-1">New Password</h1>
-                    <p className="text-brown-800/60 text-sm">Choose a strong password for your account</p>
+                    <h1 className="font-display text-4xl font-black text-white mb-2 uppercase tracking-tighter">Secure <span className="text-amber-500">Overhaul.</span></h1>
+                    <p className="text-surface-200/40 text-sm font-medium uppercase tracking-widest text-center">Update your Apex Industrial Credentials</p>
                 </div>
 
-                <div className="bg-cream-100 border border-cream-200 rounded-2xl p-6 shadow-sm">
+                <div className="bg-charcoal-800 border border-white/5 rounded-[32px] p-8 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-3xl rounded-full" />
+
                     {done ? (
-                        <div className="text-center py-4">
-                            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-100 mb-4">
-                                <CheckCircle className="w-7 h-7 text-emerald-600" />
+                        <div className="text-center py-6 relative">
+                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-500/10 mb-8 border border-emerald-500/20">
+                                <CheckCircle className="w-10 h-10 text-emerald-500" />
                             </div>
-                            <h2 className="font-semibold text-brown-900 mb-2">Password updated!</h2>
-                            <p className="text-sm text-brown-800/60">Redirecting you to sign in…</p>
+                            <h2 className="font-display text-2xl font-black text-white mb-4 uppercase tracking-tight">Credentials Verified</h2>
+                            <p className="text-surface-200/40 text-sm font-medium leading-relaxed">Redirecting to primary access hub…</p>
                         </div>
                     ) : (
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <form onSubmit={handleSubmit} className="space-y-6 relative">
                             <div>
-                                <label className="block text-sm font-medium text-brown-800 mb-1.5">New Password</label>
+                                <label className="block text-[10px] font-black text-surface-200/30 uppercase tracking-[0.2em] mb-4 ml-1">New Secure Password</label>
                                 <div className="relative">
-                                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brown-800/30" />
+                                    <KeyRound className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-200/20" />
                                     <input
                                         type="password"
                                         required
@@ -146,40 +144,40 @@ function ResetForm() {
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="••••••••"
                                         minLength={8}
-                                        className="w-full pl-10 pr-4 py-2.5 bg-cream-50 border border-cream-200 rounded-xl text-sm text-brown-800 placeholder:text-brown-800/30 focus:outline-none focus:border-sand-400 transition-colors"
+                                        className="w-full pl-16 pr-6 py-4 bg-charcoal-900 border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-amber-500/50 focus:bg-charcoal-950 transition-all placeholder:text-surface-200/20"
                                     />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-brown-800 mb-1.5">Confirm New Password</label>
+                                <label className="block text-[10px] font-black text-surface-200/30 uppercase tracking-[0.2em] mb-4 ml-1">Confirm New Credentials</label>
                                 <div className="relative">
-                                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brown-800/30" />
+                                    <KeyRound className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-200/20" />
                                     <input
                                         type="password"
                                         required
                                         value={confirm}
                                         onChange={(e) => setConfirm(e.target.value)}
                                         placeholder="••••••••"
-                                        className="w-full pl-10 pr-4 py-2.5 bg-cream-50 border border-cream-200 rounded-xl text-sm text-brown-800 placeholder:text-brown-800/30 focus:outline-none focus:border-sand-400 transition-colors"
+                                        className="w-full pl-16 pr-6 py-4 bg-charcoal-900 border border-white/5 rounded-2xl text-white font-medium focus:outline-none focus:border-amber-500/50 focus:bg-charcoal-950 transition-all placeholder:text-surface-200/20"
                                     />
                                 </div>
                             </div>
                             {error && (
-                                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
+                                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-500 font-bold uppercase tracking-widest text-center">{error}</div>
                             )}
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-3 bg-sand-600 hover:bg-sand-700 disabled:opacity-60 text-cream-50 font-semibold rounded-xl transition-colors"
+                                className="w-full py-5 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-charcoal-950 font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-amber-500/20 active:scale-[0.98] text-sm"
                             >
-                                {loading ? "Updating…" : "Set New Password"}
+                                {loading ? "SYNCHRONIZING…" : "EXECUTE UPDATE"}
                             </button>
                         </form>
                     )}
                 </div>
 
-                <p className="text-center text-sm text-brown-800/60 mt-4">
-                    <Link href="/login" className="text-sand-600 font-medium hover:underline">Back to Sign In</Link>
+                <p className="text-center mt-8 font-medium">
+                    <Link href="/login" className="text-surface-200/30 hover:text-amber-500 font-black uppercase tracking-widest text-[10px] transition-all">Cancel and Return to Login</Link>
                 </p>
             </div>
         </div>

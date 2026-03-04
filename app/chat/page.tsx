@@ -140,7 +140,7 @@ export default function ChatPage() {
                         <MessageCircle className="w-5 h-5 text-sand-600" />
                     </div>
                     <div>
-                        <h1 className="font-semibold text-brown-900">Chat with Ellie&apos;s Sanctuary</h1>
+                        <h1 className="font-semibold text-brown-900 text-lg uppercase tracking-tight">Technical Support Center</h1>
                         <p className="text-xs text-brown-800/50">We typically respond within a few hours</p>
                     </div>
                 </div>
